@@ -331,59 +331,104 @@ margin: 0; /* Poistetaan oletusmarginaalit */
     font-weight: bolder;
   }
 
+  /* Päiväkirjamerkintöjen tyylittely */
+
+  /* Training Diary Form Tyylittely */
+.training-diary-form {
+  background-color: #2c1901d7; /* Sama taustaväri kuin muilla formeilla */
+  padding: 20px;
+  font-weight: bold;
+  width: 70%; /* Sopiva leveys formin sisällölle */
+  font-size: 0.9em;
+  font-family: sans-serif;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15); /* Lisätään hieman varjostusta */
+  border-radius: 20px; /* Pyöristetyt reunat kuten muissakin formeissa */
+  margin: 50px auto; /* Keskitetään formi */
+}
+
+/* Yhtenäiset input-tyylit */
+.training-diary-form input[type="text"],
+.training-diary-form input[type="number"],
+.training-diary-form input[type="date"],
+.training-diary-form textarea {
+  width: 100%;
+  padding: 10px;
+  margin: 8px 0;
+  box-sizing: border-box;
+  border-radius: 5px; /* Pyöristetyt input-kenttien reunat */
+  border: 1px solid #ccc; /* Hienovarainen reunus */
+}
+
+.training-diary-form button {
+  background-color: #986627; /* Nappulan taustaväri, sopii yhteen muiden nappuloiden kanssa */
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  display: block;
+  width: max-content;
+  margin: 20px auto; /* Keskitetään nappula */
+  font-size: 1em;
+}
+
+.training-diary-form button:hover {
+  background-color: #98652771; /* Tummempi hover-efekti nappulalle */
+}
+
 
   /* Uudet formi tyylittelyt */
 
-  .forms {
+  /* .forms {
     color: white;
     display: flex;
     flex-direction: column;
     padding: 20px;
-    background-color: #2c1901d6; /* vaaleanharmaa taustaväri */
-    border-radius: 20px; /* pyöristetyt reunat */
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* kevyt varjostus */
-    max-width: 800px; /* rajoitetaan maksimileveys */
-    margin: 20px auto; /* keskitetään sivulla */
+    background-color: #2c1901d6; 
+    border-radius: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+    max-width: 800px; 
+    margin: 20px auto; 
     margin-bottom: 200px;
   }
   
   .styled-table {
-    width: 100%; /* käytetään kaikki käytettävissä oleva tila */
-    border-collapse: collapse; /* poistetaan oletusreunat */
-    margin-top: 20px; /* tila otsikon ja taulukon välillä */
+    width: 100%; 
+    border-collapse: collapse;
+    margin-top: 20px; 
   }
   
   .styled-table thead tr {
-    background-color: #986627; /* vaalea taustaväri otsikolle */
+    background-color: #986627; 
     text-align: left;
   }
   
   .styled-table th, .styled-table td {
-    padding: 10px; /* solujen sisäinen tila */
-    border-bottom: 1px solid ; /* erotellaan rivit toisistaan */
+    padding: 10px; 
+    border-bottom: 1px solid ; 
   }
   
   .styled-table tbody tr:hover {
-    background-color: #986627; /* hover-efekti riveille */
+    background-color: #986627; 
   }
   
   .get_users {
-    background-color: #986627; /* sininen taustaväri */
-    color: white; /* valkoinen teksti */
+    background-color: #986627; 
+    color: white; 
     padding: 10px 15px;
     border: none;
-    border-radius: 5px; /* pyöristetyt reunat */
+    border-radius: 5px; 
     cursor: pointer;
     display: block;
-    width: max-content; /* sisällön mukaan */
-    margin: 20px auto; /* keskitetään painike */
+    width: max-content; 
+    margin: 20px auto; 
     font-size: 1em;
   }
   
   .get_users:hover {
-    background-color: #98652771; /* tummempi sininen hover-efekti */
+    background-color: #98652771; 
   }
-  
+   */
   
   
   

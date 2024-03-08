@@ -215,6 +215,7 @@ const getMe = async (req, res) => {
 
 export {postLogin, getMe};
 
+
 entry-controller.mjs:
 
 import {customError} from '../middlewares/error-handler.mjs';
@@ -276,6 +277,7 @@ const deleteEntry = async (req, res, next) => {
 };
 
 export {getEntries, getEntryById, postEntry, putEntry, deleteEntry};
+
 
 item-controller.mjs:
 
@@ -353,6 +355,12 @@ import {
 } from '../models/user-model.mjs';
 import {customError} from '../middlewares/error-handler.mjs';
 
+/**
+ * Get all users
+ * @param {Object} req - Request object
+ * @param {Object} res - Response object
+ * @param {function} next - next function
+ */
 const getUsers = async (req, res, next) => {
   const result = await listAllUsers();
   if (result.error) {
@@ -522,6 +530,7 @@ const validationErrorHandler = (req, res, next) => {
 
 export {customError, notFoundHandler, errorHandler, validationErrorHandler};
 
+
 logger.mjs:
 
 const logger = (req, res, next) => {
@@ -530,6 +539,7 @@ const logger = (req, res, next) => {
 };
 
 export default logger;
+
 
 kansio src/models:
 
@@ -646,6 +656,7 @@ export {
   deleteEntryById,
 };
 
+
 item-model.mjs:
 
 // mock data for simple API
@@ -657,6 +668,7 @@ const items = [
 ];
 
 export default items;
+
 
 user-model.mjs:
 
@@ -806,9 +818,20 @@ const authRouter = express.Router();
  *    }
  */
 
+/**
+ * @apiDefine InvalidTokenError
+ * @apiError InvalidToken Authentication token was invalid.
+ * @apiErrorExample Error-Response:
+ *     HTTP/1.1 401 Unauthorized
+ *     {
+ *       "message": "invalid token",
+ *       "status": 401
+ *     }
+ */
+
 authRouter
   /**
-   * @api {post} /login Login
+   * @api {post} /auth/login Login
    * @apiVersion 1.0.0
    * @apiName PostLogin
    * @apiGroup Authentication
@@ -832,10 +855,7 @@ authRouter
    *    HTTP/1.1 200 OK
    *    {
    *      "message": "Logged in successfully",
-   *      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoyMSwid
-   *                XNlcm5hbWUiOiJ1dXNpMSIsImVtYWlsIjoidXVzaTFAZXhhbXBsZS5jb20
-   *                iLCJ1c2VyX2xldmVsX2lkIjoyLCJpYXQiOjE3MDEyNzkzMjJ9.3TbVTcXS
-   *                dryTDm_huuXC_U1Lg4rL0SOFyn_WAsC6W0Y"
+   *      "token": "TOKEN-VALUE"
    *      "user": {
    *        "user_id": 21,
    *        "username": "johnd",
@@ -853,10 +873,42 @@ authRouter
     validationErrorHandler,
     postLogin,
   )
-  // get user info
+  /**
+   * @api {get} /auth/me Request information about current user
+   * @apiVersion 1.0.0
+   * @apiName GetMe
+   * @apiGroup Authentication
+   * @apiPermission token
+   * @apiHeader {String} Authorization Bearer token.
+   *
+   * @apiSuccess {Object} user User info.
+   * @apiSuccess {Number} user.user_id Id of the User.
+   * @apiSuccess {String} user.username Username of the User.
+   * @apiSuccess {String} user.email email of the User.
+   * @apiSuccess {Date} user.created_at User creation time.
+   * @apiSuccess {String} user.user_level User level of the User.
+   * @apiSuccess {Number} user.iat Token creation timestamp.
+   * @apiSuccess {Number} user.exp Token expiration timestamp.
+   *
+   * @apiSuccessExample Success-Response:
+   * HTTP/1.1 200 OK
+   * {
+   *   "user": {
+   *     "user_id": 18,
+   *     "username": "johnjane",
+   *     "email": "johnjane@example.com",
+   *     "created_at": "2024-03-07T12:45:51.000Z",
+   *     "user_level": "regular",
+   *     "iat": 1709887124,
+   *     "exp": 1709973524
+   *   }
+   * }
+   * @apiUse InvalidTokenError
+   */
   .get('/me', authenticateToken, getMe);
 
 export default authRouter;
+
 
 entry-router.mjs:
 
@@ -918,6 +970,7 @@ entryRouter
 
 export default entryRouter;
 
+
 item-router.mjs:
 
 import express from 'express';
@@ -945,6 +998,7 @@ itemRouter.delete('/:id', deleteItem);
 
 export default itemRouter;
 
+
 user-router.mjs:
 
 import express from 'express';
@@ -964,7 +1018,22 @@ const userRouter = express.Router();
 // /api/user endpoint
 userRouter
   .route('/')
-  // list users
+  /**
+   * @api {get} /users Request user list
+   * @apiName GetUsers
+   * @apiGroup Users
+   * @apiPermission token
+   *
+   * @apiSuccess {Array} user[] array of Users.
+   * @apiSuccess {Object} user User object.
+   * @apiSuccess {Number} user.user_id Id of the user.
+   * @apiSuccess {String} user.username Username
+   * @apiSuccess {String} user.user_level Userlevel of the User.
+   *
+   * TODO: add example response
+   *
+   * @apiUse InvalidTokenError
+   */
   .get(authenticateToken, getUsers)
   // update user
   .put(
@@ -991,7 +1060,7 @@ userRouter
       .isAlphanumeric(),
     body('password', 'minimum password length is 8 characters')
       .trim()
-      .isLength({min: 4, max: 128}),
+      .isLength({min: 3, max: 128}),
     body('email', 'must be a valid email address')
       .trim()
       .isEmail()
@@ -1020,6 +1089,7 @@ userRouter
 
 export default userRouter;
 
+
 kansio src/utils:
 
 database.mjs:
@@ -1038,6 +1108,7 @@ const pool = mysql.createPool({
 });
 const promisePool = pool.promise();
 export default promisePool;
+
 
 src kansion muu sisältö:
 
@@ -1104,14 +1175,13 @@ app.listen(port, hostname, () => {
   console.log(`Server running at http://${hostname}:${port}/`);
 });
 
+
 rnd-tests.mjs:
 
-/* eslint-disable spaced-comment */
-/* eslint-disable max-len */
 const calculateSum = (...numbers) => {
-  console.log('input values: ', numbers); //-> input values:  [1, 2, 3, 4, 5] (array)
+  console.log('input values: ', numbers);  //-> input values:  [1, 2, 3, 4, 5] (array)
   return numbers.reduce((acc, number) => acc + number, 0);
-};
+}
 calculateSum(1, 2, 3, 4, 5); // 15
 
 const originalArray = [1, 2, 3];
@@ -1132,3 +1202,5 @@ JWT_SECRET=sfc005rgfy
 JWT_EXPIRES_IN=1d
 
 ja jonkun verran muita tuloksia. Lisätietoa saa kysymällä.
+
+muutokset tehty: 17.05

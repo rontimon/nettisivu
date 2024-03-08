@@ -4,6 +4,8 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="polku/style.css">
+
     <title>Vite App</title>
   </head>
   <body>
@@ -19,6 +21,21 @@
     <div id="app"></div>
 
     <div class="user"><h2>Tervetuloa päiväkirjaasi <span id="name">NIMI TÄHÄN</span>!</h2></div>
+
+
+
+    <!-- <h3>Päiväkirjasi</h3> -->
+
+    <form class="training-diary-form">
+      <input type="date" name="entry_date" required>
+      <input type="number" name="mood" placeholder="Päivän mood? (1-10)" min="1" max="10" required>
+      <input type="text" name="training_time" placeholder="Treenin kesto minuutteina" required>
+      <textarea name="notes" placeholder="Merkinnät"></textarea>
+      <textarea name="goals" placeholder="Tavoitteet"></textarea>
+      <button type="submit">Lisää merkintä</button>
+    </form>
+    
+
 
     <!-- <h3>/api/users</h3> -->
 
@@ -40,7 +57,7 @@
           DELETE http://127.0.0.1:3000/api/users/:id
           </code></pre> -->
 
-    <div class="forms">
+    <!-- <div class="forms">
       <div style="flex: 1">
         <h3>GET and DELETE</h3>
 
@@ -56,12 +73,12 @@
               <th>ID</th>
             </tr>
           </thead>
-          <tbody class="tbody">
+          <tbody class="tbody"> -->
             <!-- tänne haetaan kaikki käyttäjät -->
             <!-- # Get all users -->
             <!-- GET http://127.0.0.1:3000/api/users -->
             
-          </tbody>
+          <!-- </tbody>
         </table>
 
         <button class="get_users">Hae users tiedot</button>
@@ -70,15 +87,15 @@
     </div>
 
     <dialog class="info_dialog">
-      <p>
+      <p> -->
         <!-- tänne haetaan yksittäinen valittu käyttäjät -->      
-        <div>UserID: <span>Id</span></div>
+        <!-- <div>UserID: <span>Id</span></div>
         <div>UserName: <span>Username</span></div>
         <div>Email: <span>Email</span></div>
         <div>Role: <span>Role</span></div> 
       </p>
       <button autofocus>Close</button>
-    </dialog>
+    </dialog> -->
 
     <!-- <h3>Kotitehtävä, tee ja testaa kaikki: /api/entries</h3>
 
@@ -97,5 +114,5 @@
   </body>
   
   <script type="module" src="/start-api-harjoituspohja.js"></script>
-  <script type="module" src="/start-auth.js"></script>
+  <!-- <script type="module" src="/start-auth.js"></script> -->
 </html>

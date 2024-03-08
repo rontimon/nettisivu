@@ -1,0 +1,1021 @@
+Frontend kansion nimi on Nettisivu, joka pitää sisällään kansiot images, node_modules, public.
+Lisäksi Nettisivu kansio pitää sisällään tiedostot: counter.js, fetch.js, index.html, javascript.svg,
+main.js, package-lock.json, package.json, start-api-harjoituspohja.html, start-api-harjoituspohja.js,
+start-auth.html, start-auth.js sekä style.css.
+
+Tässä yksitellen tiedostot (kansoiden sisältöä annan vain jos se on tarpeen):
+
+counter.js:
+
+export function setupCounter(element) {
+  let counter = 0
+  const setCounter = (count) => {
+    counter = count
+    element.innerHTML = `count is ${counter}`
+  }
+  element.addEventListener('click', () => setCounter(counter + 1))
+  setCounter(0)
+}
+
+
+fetch.js:
+
+/**
+ * Fetches JSON data from APIs
+ *
+ * @param {string} url - api endpoint url
+ * @param {Object} options - request options
+ *
+ * @returns {Object} response json data
+ */
+const fetchData = async (url, options = {}) => {
+    let jsonData;
+    try {
+      const response = await fetch(url, options);
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status} - ${response.statusText}`);
+      }
+  
+      jsonData = await response.json();
+    } catch (error) {
+      console.error('fetchData() error', error);
+      jsonData = {};
+    }
+    //console.log(jsonData);
+    return jsonData;
+  };
+  
+  export { fetchData };
+
+index.html:
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vite App</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/main.js"></script>
+  </body>
+</html>
+
+javascript.svg:
+
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img" class="iconify iconify--logos" width="32" height="32" preserveAspectRatio="xMidYMid meet" viewBox="0 0 256 256"><path fill="#F7DF1E" d="M0 0h256v256H0V0Z"></path><path d="m67.312 213.932l19.59-11.856c3.78 6.701 7.218 12.371 15.465 12.371c7.905 0 12.89-3.092 12.89-15.12v-81.798h24.057v82.138c0 24.917-14.606 36.259-35.916 36.259c-19.245 0-30.416-9.967-36.087-21.996m85.07-2.576l19.588-11.341c5.157 8.421 11.859 14.607 23.715 14.607c9.969 0 16.325-4.984 16.325-11.858c0-8.248-6.53-11.17-17.528-15.98l-6.013-2.58c-17.357-7.387-28.87-16.667-28.87-36.257c0-18.044 13.747-31.792 35.228-31.792c15.294 0 26.292 5.328 34.196 19.247l-18.732 12.03c-4.125-7.389-8.591-10.31-15.465-10.31c-7.046 0-11.514 4.468-11.514 10.31c0 7.217 4.468 10.14 14.778 14.608l6.014 2.577c20.45 8.765 31.963 17.7 31.963 37.804c0 21.654-17.012 33.51-39.867 33.51c-22.339 0-36.774-10.654-43.819-24.574"></path></svg>
+
+main.js:
+
+import './style.css'
+import javascriptLogo from './javascript.svg'
+import viteLogo from '/vite.svg'
+import { setupCounter } from './counter.js'
+
+document.querySelector('#app').innerHTML = `
+  <div>
+    <a href="https://vitejs.dev" target="_blank">
+      <img src="${viteLogo}" class="logo" alt="Vite logo" />
+    </a>
+    <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank">
+      <img src="${javascriptLogo}" class="logo vanilla" alt="JavaScript logo" />
+    </a>
+    <h1>Hello Vite!</h1>
+    <div class="card">
+      <button id="counter" type="button"></button>
+    </div>
+    <p class="read-the-docs">
+      Click on the Vite logo to learn more
+    </p>
+  </div>
+`
+
+setupCounter(document.querySelector('#counter'))
+
+package.json:
+
+{
+  "name": "vite-project2.0",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^5.1.4"
+  }
+}
+
+start-api-harjoituspohja.html:
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="polku/style.css">
+
+    <title>Vite App</title>
+  </head>
+  <body>
+    <nav>
+      <a href="#createUser">Logo</a>
+      <a href="#logout" id="logoutButton">Kirjaudu ulos</a>
+      <!-- <a href="#loginUser">Login User</a> -->
+      <a href="#userInfo">Info</a>
+      
+    </nav>
+    <main>
+
+    <div id="app"></div>
+
+    <div class="user"><h2>Tervetuloa päiväkirjaasi <span id="name">NIMI TÄHÄN</span>!</h2></div>
+
+
+
+    <!-- <h3>Päiväkirjasi</h3> -->
+
+    <form class="training-diary-form">
+      <input type="date" name="entry_date" required>
+      <input type="number" name="mood" placeholder="Päivän mood? (1-10)" min="1" max="10" required>
+      <input type="text" name="training_time" placeholder="Treenin kesto minuutteina" required>
+      <textarea name="notes" placeholder="Merkinnät"></textarea>
+      <textarea name="goals" placeholder="Tavoitteet"></textarea>
+      <button type="submit">Lisää merkintä</button>
+    </form>
+    
+
+
+    <!-- <h3>/api/users</h3> -->
+
+   <!-- <p>
+          Hae käyttäjän tiedot painamalla alla olevaa nappia. Tämä hakee tiedot sekä luo taulukon
+          tbody osan. Jokaiselle riville luodaan nappula. Info hakee yksittäisen rivin tiedot ja
+          avaa dialogin. Delete poistaa yksittäisen rivin ja varmistaa tapahtuman confirm()
+          metodilla.
+        </p> -->
+
+        <!-- <pre><code>
+          # Get all users (requires token)
+          GET http://127.0.0.1:3000/api/users
+          
+          # Get user by id (requires token)
+          GET http://127.0.0.1:3000/api/users/:id
+          
+          # Delete user (requires token)
+          DELETE http://127.0.0.1:3000/api/users/:id
+          </code></pre> -->
+
+    <!-- <div class="forms">
+      <div style="flex: 1">
+        <h3>GET and DELETE</h3>
+
+        
+
+        <table class="styled-table">
+          <thead>
+            <tr>
+              <th>User Name</th>
+              <th>User Level</th>
+              <th>Info</th>
+              <th>Delete</th>
+              <th>ID</th>
+            </tr>
+          </thead>
+          <tbody class="tbody"> -->
+            <!-- tänne haetaan kaikki käyttäjät -->
+            <!-- # Get all users -->
+            <!-- GET http://127.0.0.1:3000/api/users -->
+            
+          <!-- </tbody>
+        </table>
+
+        <button class="get_users">Hae users tiedot</button>
+      </div>
+      
+    </div>
+
+    <dialog class="info_dialog">
+      <p> -->
+        <!-- tänne haetaan yksittäinen valittu käyttäjät -->      
+        <!-- <div>UserID: <span>Id</span></div>
+        <div>UserName: <span>Username</span></div>
+        <div>Email: <span>Email</span></div>
+        <div>Role: <span>Role</span></div> 
+      </p>
+      <button autofocus>Close</button>
+    </dialog> -->
+
+    <!-- <h3>Kotitehtävä, tee ja testaa kaikki: /api/entries</h3>
+
+    <p>Hae käyttäjän (user: 1) entires tiedot ja console.log</p>
+    <pre>
+      # Get entries by id
+      GET http://localhost:3000/api/entries/:id
+    </pre> -->
+    <!-- <button class="get_entry">Hae (user:1) entries</button> -->
+
+    
+  </main>
+
+  <footer>Copyright, LongWay</footer>
+  
+  </body>
+  
+  <script type="module" src="/start-api-harjoituspohja.js"></script>
+  <!-- <script type="module" src="/start-auth.js"></script> -->
+</html>
+
+start-api-harjoituspohja.js:
+
+import './style.css';
+import { fetchData } from './fetch.js';
+
+document.addEventListener('DOMContentLoaded', async function () {
+    const token = localStorage.getItem('token');
+    
+    if (!token) {
+        window.location.href = 'etusivu.html';
+        return;
+    }
+
+    // Näyttää kirjautuneen käyttäjän nimen
+    await showUserName(token);
+
+    const form = document.querySelector('.training-diary-form');
+    if(form) {
+        form.addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData.entries());
+            const url = 'http://localhost:3000/api/training-diary';
+
+            try {
+                const responseData = await fetchData(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`,
+                    },
+                    body: JSON.stringify(data)
+                });
+                console.log(responseData);
+                alert('Päiväkirjamerkintä lisätty onnistuneesti!');
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+    }
+
+    document.getElementById('logoutButton').addEventListener('click', function() {
+        localStorage.removeItem('token');
+        window.location.href = 'login.html';
+    });
+});
+
+async function showUserName(token) {
+    const url = 'http://localhost:3000/api/auth/me';
+    const options = {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${token}`,
+        },
+    };
+
+    try {
+        const data = await fetchData(url, options);
+        document.getElementById('name').textContent = data.user.username;
+    } catch (error) {
+        console.error('Error fetching user name:', error);
+    }
+}
+
+
+start-auth.html:
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vite App</title>
+  </head>
+
+  <body>
+    <nav>
+      <a href="#createUser">Logo</a>
+      <!-- <a href="#loginUser">Login User</a> -->
+      <a href="#userInfo">Info</a>
+    </nav>
+    <main>
+      <section id="herokuva"></section>
+
+      <section class="content">
+      <!-- <img id="kuva" src="images/logo2.png" alt="logo"> -->
+  
+     
+  
+      <!-- <img id="koiraystävä" src="images/dogfriend.webp" alt="dogfriend"> -->
+      
+      <h2>Long Way</h2>
+  
+      <h3>Kouluttaminen osana ystävyyttä</h3>
+  
+      
+  
+      <!-- Responsive images and centering -->
+      <p>Koiran kouluttaminen on matka, joka vaaditaan kuljettavaksi ajan, kärsivällisyyden ja sitoutumisen kautta. Se on prosessi, jossa luottamuksen ja ystävyyden perusta rakennetaan, ja se voi kestää koko lemmikin eliniän. Kaikki koirat eivät ole samanlaisia; jotkut voivat olla haastavampia koulutettavia kuin toiset. Vaikeuksien kohtaaminen koiran koulutuksessa on ymmärrettävä haaste, mutta tärkeää on muistaa, ettei kukaan ole yksin tässä prosessissa. Jokainen koira on ainutlaatuinen, ja jokainen koulutuskokemus tarjoaa mahdollisuuden oppimiseen ja yhdessä kasvamiseen.</p>
+  
+      <p>Koiran koulutuksen ei nähdä olevan pelkästään temppujen tai käskyjen opettamista; se on viestintäkanavan luomista koiran ja sen omistajan välille. Tämän kautta syvennetään yhteistä ymmärrystä ja vahvistetaan sidettä, mikä tekee arjesta sujuvampaa molemmille. Koulutus tarjoaa rakenteen, joka auttaa koiraa ymmärtämään, mitä siltä odotetaan, ja tämä selkeys on perusta turvalliselle ja onnelliselle yhteiselolle.</p>
+  
+      <p>Koulutuksen haasteiden kohtaaminen voi tuntua ylivoimaiselta, erityisesti kun edistystä mitataan pienin, joskus tuskin havaittavin, askelin. Mutta jokainen onnistuminen, pienikin sellainen, katsotaan olevan juhlan arvoinen. Koiran koulutusprosessissa ei opi ainoastaan koira, myös omistaja oppii tuntemaan paremmin itseään, kärsivällisyytensä rajoja ja kykyään ohjata lemmikkiä läpi haastavien aikojen.</p>
+  
+      <p>Koulutuspäiväkirjan pitäminen tarjoaa ainutlaatuisen tavan seurata edistystä, juhlistaa onnistumisia ja muistella niitä hetkiä, kun ylittämättömiltä tuntuneet esteet voitettiin. Päiväkirja toimii muistutuksena siitä, kuinka pitkälle on tultu, ja se voi inspiroida ja motivoida jatkamaan, vaikka edistyminen tuntuisikin joskus hitaalta.</p>
+  
+      <p>Koiran kouluttaminen on investointi, joka kantaa hedelmää koko yhteisen elämän ajan, syventäen ystävyyttä ja ymmärrystä päivä päivältä.</p>
+  </section>
+
+    
+
+    <div class="container">
+    
+
+    <form class="create_user_form">
+      <h4>Luo uusi käyttäjä</h4>
+      <label for="username">Username</label>
+      <input type="text" name="username" placeholder="Käyttäjänimi" />
+      <label for="password">Password</label>
+      <input type="password" name="password" placeholder="Salasana" />
+      <label for="email">Email</label>
+      <input type="email" name="email" placeholder="Sähköposti" />
+      <input name="submit" type="submit" value="Luo uusi käyttäjä" class="createuser" />
+    </form>
+    
+      
+    <form class="login_form">
+      <h4>Kirjaudu sisään</h4>
+      <label for="username">Username</label>
+      <input type="text" name="username" placeholder="test" />
+      <label for="password">Password</label>
+      <input type="password" name="password" placeholder="test" />
+      <input name="submit" type="submit" value="Kirjaudu sisään" class="loginuser" />
+      <br />
+      <h5>TOKEN:</h5>
+      <div id="loginResponse"></div>
+    </form>
+      
+    
+    </div>
+  </main>  
+
+  <footer>Copyright, LongWay</footer>
+
+  </body>
+
+  <script type="module" src="/start-auth.js"></script>
+  <!-- <script type="module" src="/start-api-harjoituspohja.js"></script> -->
+</html>
+
+start-auth.js:
+
+import './style.css';
+import { fetchData } from './fetch.js';
+
+// haetaan nappi josta lähetetään formi ja luodaan käyttäjä
+const createUser = document.querySelector('.createuser');
+
+createUser.addEventListener('click', async (evt) => {
+  evt.preventDefault();
+  console.log('Nyt luodaan käyttäjä');
+
+  const url = 'http://127.0.0.1:3000/api/users';
+
+  // # Create user
+  // POST http://127.0.0.1:3000/api/users
+  // content-type: application/json
+
+  const form = document.querySelector('.create_user_form');
+  const username = form.querySelector('input[name=username]').value;
+
+  // kokeillaan ensin kovakoodattuna
+  // const body = {
+  //   username: 'testii',
+  //   password: 'testii',
+  //   email: 'testii@testii.fi',
+  // };
+
+  const data = {
+    username: username,
+    password: form.querySelector('input[name=password]').value,
+    email: form.querySelector('input[name=email]').value,
+  };
+
+  const options = {
+    method: 'POST', // *GET, POST, PUT, DELETE, etc.
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data), // body data type must match "Content-Type" header
+  };
+
+  fetchData(url, options).then((data) => {
+    // käsitellään fetchData funktiosta tullut JSON
+    console.log(data);
+    alert("Luodaan uusi käyttäjä")
+  });
+});
+
+// haetaan nappi josta haetaan formi ja logataan sisään
+// tästä saadaan TOKEN
+const loginUser = document.querySelector('.loginuser');
+
+loginUser.addEventListener('click', async (evt) => {
+  evt.preventDefault();
+  console.log('Nyt logataan sisään');
+
+  // # Login
+  // POST http://localhost:3000/api/auth/login
+  // content-type: application/json
+
+  // {
+  //   "username": "user",
+  //   "password": "secret"
+  // }
+
+  const url = 'http://localhost:3000/api/auth/login';
+
+  const form = document.querySelector('.login_form');
+
+  const data = {
+    username: form.querySelector('input[name=username]').value,
+    password: form.querySelector('input[name=password]').value,
+  };
+
+  const options = {
+    method: 'POST', // *GET, POST, PUT, DELETE, etc.
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data), // body data type must match "Content-Type" header
+  };
+
+  // tähän redirect
+
+
+  fetchData(url, options).then((data) => {
+    // käsitellään fetchData funktiosta tullut JSON
+    console.log(data);
+    console.log(data.token);
+    localStorage.setItem('token', data.token);
+    // jos on token, consoleloggaa että kaikki hyvin
+    // jos ei, niin consoleloggaa: "tokenia ei ollut"
+    if (data.token == undefined) {
+      alert('Unauthorized user: käyttäjänimi tai salasana vihreellinen');
+    } else {
+      alert(data.message);
+      localStorage.setItem('name', data.user.username);
+      // siirrytään oikealle sivulle kun kirjautuminen on onnistunut
+      window.location.href = 'start-api-harjoituspohja.html';
+    };
+    
+    logResponse('loginResponse', `localStorage set with token value: ${data.token}`);
+  });
+});
+
+// Haetaan nappi josta testataan TOKENIN käyttöä, /auth/me
+const meRequest = document.querySelector('#meRequest');
+meRequest.addEventListener('click', async () => {
+  console.log('Testataan TOKENIA ja haetaan käyttäjän tiedot');
+
+  // # Get user info by token (requires token)
+  // GET http://localhost:3000/api/auth/me
+  // Authorization: Bearer (put-user-token-here)
+
+  const url = 'http://localhost:3000/api/auth/me';
+  const muntokeni = localStorage.getItem('token');
+  console.log('Tämä on haettu LocalStoragesta', muntokeni);
+
+  const options = {
+    method: 'GET', // *GET, POST, PUT, DELETE, etc.
+    headers: {
+      Authorization: 'Bearer: ' + muntokeni,
+    },
+  };
+
+  console.log(options);
+
+  fetchData(url, options).then((data) => {
+    // käsitellään fetchData funktiosta tullut JSON
+    console.log(data);
+    logResponse('meResponse', `Authorized user info: ${JSON.stringify(data)}`);
+  });
+});
+
+// Haetaan nappi josta tyhjennetään localStorage
+const clear = document.querySelector('#clearButton');
+clear.addEventListener('click', clearLocalStorage);
+
+// Apufunktio, kirjoittaa halutin koodiblokin sisään halutun tekstin
+function logResponse(codeblock, text) {
+  document.getElementById(codeblock).innerText = text;
+}
+
+// Apufunktio, Tyhjennä local storage
+function clearLocalStorage() {
+  localStorage.removeItem('token');
+  logResponse('clearResponse', 'localStorage cleared!');
+}
+
+
+style.css:
+
+
+:root {
+    
+    font-family:Verdana, Geneva, Tahoma, sans-serif;
+    line-height: 1.5;
+    font-weight: 400;
+  
+    /* color-scheme: light dark;
+    color: rgba(255, 255, 255, 0.87);
+    background-color: #242424; */
+  
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  
+  
+  body {
+    background-image: url(images/dogway.jpeg);
+    display: block;
+    
+    margin: 0;
+
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+  }
+
+  main {
+      max-width: 1200px;
+      margin: auto;
+  }
+  
+  /* Navigaatiopalkin tyylit */
+  nav {
+    background-color: #2c1901;
+    overflow: hidden;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    
+  }
+  nav a {
+    float: right;
+    color: white;
+    text-align: center;
+    padding: 14px 20px;
+    text-decoration: none;
+    font-size: 17px;
+  }
+
+  nav a:first-child {
+    float: left;
+  }
+
+  nav a:hover {
+    background-color: #ddd;
+    color: black;
+  }
+
+
+  * {
+    box-sizing: border-box;
+  }
+  a {
+    font-weight: 500;
+    color: white;
+    text-decoration: inherit;
+  }
+  a:hover {
+    background-color: #95601a;
+    padding: 10px;
+    border-radius: 10px;
+  }
+
+  h1 {
+    font-size: 3.2em;
+    line-height: 1.1;
+  }
+  
+  #app {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 2rem;
+    text-align: center;
+    color: rgb(0, 0, 0);
+  }
+  
+
+  #herokuva {
+    background-color: #95601a;
+    height: 57vh;
+    
+    
+    background-image: url(images/dogsunset.jpeg);
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+    border-bottom-right-radius: 50px;
+    border-bottom-left-radius: 50px;
+    margin-bottom: 50px;
+}
+
+
+
+@media screen and (max-width: 1000px) {
+    #herokuva {
+        display: none;
+    }
+    #kuva {
+        display: none;
+    }
+    #pyörä {
+        display: none;
+    }
+    #text {
+        margin-top: 100px;
+    }
+}
+
+/* Etusivutyylittely */
+
+.etuvalikko {
+  color: white;
+  background-color: #2c1901d7;
+  padding: 30px;
+  
+  border: 3px;
+  width: 650px;
+  border-radius: 50px;
+  /*text-align: center; */
+
+  margin: auto;
+  display: block;
+  position: relative;
+  margin-top: 200px;
+  margin-bottom: 30px;
+}
+
+
+  #koiraystävä {
+    width: 300px;
+    margin: 20px;
+  }
+
+  .content {
+    color: white;
+    background-color: #2c1901d7;
+    padding: 10px;
+    border: 3px;
+    width: 800px;
+    border-radius: 50px;
+    /*text-align: center; */
+
+    margin: auto;
+    padding-left: 60px;
+    padding-right: 60px;
+    position: relative;
+    margin-top: 100px;
+    margin-bottom: 30px;
+}
+
+.container {
+  display: flex;
+  margin: 50px;
+  margin-bottom: 470px;
+}
+
+/* Formin tyylittely */
+form {
+  /* background-color: #009879;
+  color: #ffffff;
+  padding: 10px;
+  margin-top: 25px;
+  margin-bottom: 25px;
+  font-weight: bold;
+  width: 300px;
+  font-size: 0.9em;
+  font-family: sans-serif;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15); */
+
+background-color: #2c1901d7;
+color: #ffffff;
+padding: 20px;
+font-weight: bold;
+width: 600px;
+font-size: 0.9em;
+font-family: sans-serif;
+box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+border-radius: 20px; /* Pyöristetyt reunat */
+margin: 0; /* Poistetaan oletusmarginaalit */
+}
+
+.create_user_form, .login_form {
+  margin: 50px;
+}
+
+.create_user_form input[type="submit"], .login_form input[type="submit"] {
+  display: block;
+  padding: 10px;
+  margin: 20px auto;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+/* Toisen sivun sääntöjä */
+  button {
+    border-radius: 8px;
+    border: 1px solid transparent;
+    padding: 0.6em 1.2em;
+    margin-top: 1em;
+    font-size: 1em;
+    font-weight: 500;
+    font-family: inherit;
+    cursor: pointer;
+    transition: border-color 0.25s;
+  }
+  button:hover {
+    border-color: #646cff;
+  }
+  button:focus,
+  button:focus-visible {
+    outline: 4px auto -webkit-focus-ring-color;
+  }
+  
+  @media (prefers-color-scheme: light) {
+    :root {
+      color: #213547;
+      background-color: #ffffff;
+    }
+    a:hover {
+      color: #747bff;
+    }
+    button {
+      background-color: #f9f9f9;
+    }
+  }
+  
+  h4 {
+    border-bottom: 4px solid #975a0e;
+    
+  }
+  
+  button.del, button.check, button.update {
+    padding: 0.3rem 0.6rem;
+    margin: 0;
+  }
+  
+  button.update {
+    background-color: #f2e49448;
+  }
+  
+  button.del {
+    background-color: #f2a29448;
+  }
+
+  
+  
+  ::backdrop {
+    background-image: linear-gradient(
+      45deg,
+      magenta,
+      rebeccapurple,
+      dodgerblue,
+      green
+    );
+    opacity: 0.75;
+  }
+  
+  /* Navigaatiolista tyylittely */
+  ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #ff724f;
+  }
+  
+  li {
+    float: left;
+  }
+  
+  li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+  }
+  
+  li a:hover {
+    color: white;
+  }
+  
+  li a:hover:not(.active) {
+    background-color: #c83d3d;
+  }
+  
+  .active {
+    background-color: black;
+  }
+  
+  /* Käyttäjä loggaantunut tyylittely */
+  .user {
+    display: block;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    margin-top: 50px;
+  }
+  #name {
+    font-weight: bolder;
+  }
+
+  /* Päiväkirjamerkintöjen tyylittely */
+
+  /* Training Diary Form Tyylittely */
+.training-diary-form {
+  background-color: #2c1901d7; /* Sama taustaväri kuin muilla formeilla */
+  padding: 20px;
+  font-weight: bold;
+  width: 70%; /* Sopiva leveys formin sisällölle */
+  font-size: 0.9em;
+  font-family: sans-serif;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15); /* Lisätään hieman varjostusta */
+  border-radius: 20px; /* Pyöristetyt reunat kuten muissakin formeissa */
+  margin: 50px auto; /* Keskitetään formi */
+}
+
+/* Yhtenäiset input-tyylit */
+.training-diary-form input[type="text"],
+.training-diary-form input[type="number"],
+.training-diary-form input[type="date"],
+.training-diary-form textarea {
+  width: 100%;
+  padding: 10px;
+  margin: 8px 0;
+  box-sizing: border-box;
+  border-radius: 5px; /* Pyöristetyt input-kenttien reunat */
+  border: 1px solid #ccc; /* Hienovarainen reunus */
+}
+
+.training-diary-form button {
+  background-color: #986627; /* Nappulan taustaväri, sopii yhteen muiden nappuloiden kanssa */
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  display: block;
+  width: max-content;
+  margin: 20px auto; /* Keskitetään nappula */
+  font-size: 1em;
+}
+
+.training-diary-form button:hover {
+  background-color: #98652771; /* Tummempi hover-efekti nappulalle */
+}
+
+
+  /* Uudet formi tyylittelyt */
+
+  /* .forms {
+    color: white;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    background-color: #2c1901d6; 
+    border-radius: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+    max-width: 800px; 
+    margin: 20px auto; 
+    margin-bottom: 200px;
+  }
+  
+  .styled-table {
+    width: 100%; 
+    border-collapse: collapse;
+    margin-top: 20px; 
+  }
+  
+  .styled-table thead tr {
+    background-color: #986627; 
+    text-align: left;
+  }
+  
+  .styled-table th, .styled-table td {
+    padding: 10px; 
+    border-bottom: 1px solid ; 
+  }
+  
+  .styled-table tbody tr:hover {
+    background-color: #986627; 
+  }
+  
+  .get_users {
+    background-color: #986627; 
+    color: white; 
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px; 
+    cursor: pointer;
+    display: block;
+    width: max-content; 
+    margin: 20px auto; 
+    font-size: 1em;
+  }
+  
+  .get_users:hover {
+    background-color: #98652771; 
+  }
+   */
+  
+  
+  
+  
+
+  /* Input kenttien tyylittely */
+  input[type=text], input[type=password], input[type=email] {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    box-sizing: border-box;
+  }
+  
+  /* Koodiesimerkin tyylittely */
+  pre {
+    background-color: aliceblue;
+  }
+  
+  #loginResponse, #meResponse {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: smaller;
+    display: block;
+    width: 100%;
+    word-break:break-all;
+  }
+  
+  @media screen and (max-width: 800px) {
+    .forms {
+      flex-direction: column;
+    }
+  }
+
+
+
+
+
+  
+  footer {
+            
+    background-color: #2c1901;
+    padding-top: 10px;
+    width: 100%;
+    height: 50px;
+    margin-top: 300px;
+    position: fixed;
+    bottom: 0;
+
+    text-align: center;
+    font-family:Arial, Helvetica, sans-serif;
+    color: white;
+    
+}

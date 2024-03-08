@@ -343,6 +343,27 @@ const putItem = (req, res) => {
 
 export {getItems, getItemById, postItem, deleteItem, putItem};
 
+training-diary-controller.mjs:
+
+// src/controllers/training-diary-controller.mjs
+import { addTrainingDiaryEntry } from '../models/training-diary-model.mjs';
+
+const postTrainingDiaryEntry = async (req, res, next) => {
+  try {
+    const userId = req.user.user_id; // Oletus: käyttäjän tunnistus tehdään tokenista
+    const { entry_date, mood, training_time, notes, goals } = req.body;
+    const result = await addTrainingDiaryEntry({ userId, entry_date, mood, training_time, notes, goals });
+    res.status(201).json({ message: 'Training diary entry added successfully', ...result });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Lisää tarvittaessa muita handler-funktioita
+
+export { postTrainingDiaryEntry };
+
+
 user-controller.mjs:
 
 import bcrypt from 'bcryptjs';
@@ -668,6 +689,21 @@ const items = [
 ];
 
 export default items;
+
+training-diary-model.mjs:
+
+// src/models/training-diary-model.mjs
+import promisePool from '../utils/database.mjs';
+
+const addTrainingDiaryEntry = async ({ userId, entry_date, mood, training_time, notes, goals }) => {
+  const sql = `INSERT INTO TrainingDiary (user_id, entry_date, mood, training_time, notes, goals) VALUES (?, ?, ?, ?, ?, ?)`;
+  const [result] = await promisePool.execute(sql, [userId, entry_date, mood, training_time, notes, goals]);
+  return { diary_id: result.insertId };
+};
+
+// Lisää tarvittaessa muita funktioita, kuten haku, päivitys, poisto...
+
+export { addTrainingDiaryEntry };
 
 
 user-model.mjs:
@@ -999,6 +1035,23 @@ itemRouter.delete('/:id', deleteItem);
 export default itemRouter;
 
 
+training-diary-router.mjs:
+
+// src/routes/training-diary-router.mjs
+import express from 'express';
+import { postTrainingDiaryEntry } from '../controllers/training-diary-controller.mjs';
+import { authenticateToken } from '../middlewares/authentication.mjs';
+
+const router = express.Router();
+
+router.post('/', authenticateToken, postTrainingDiaryEntry);
+
+// Määrittele tarvittaessa lisää reittejä
+
+export default router;
+
+
+
 user-router.mjs:
 
 import express from 'express';
@@ -1125,6 +1178,7 @@ import cors from 'cors';
 import logger from './middlewares/logger.mjs';
 import authRouter from './routes/auth-router.mjs';
 import {errorHandler, notFoundHandler} from './middlewares/error-handler.mjs';
+import trainingDiaryRouter from './routes/training-diary-router.mjs';
 const hostname = '127.0.0.1';
 const port = 3000;
 const app = express();
@@ -1174,6 +1228,9 @@ app.use(errorHandler);
 app.listen(port, hostname, () => {
   console.log(`Server running at http://${hostname}:${port}/`);
 });
+
+// Päiväkirjamerkintöjen lisääminen
+app.use('/api/training-diary', trainingDiaryRouter);
 
 
 rnd-tests.mjs:
