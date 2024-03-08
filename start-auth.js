@@ -16,7 +16,6 @@ createUser.addEventListener('click', async (evt) => {
 
   const form = document.querySelector('.create_user_form');
   const username = form.querySelector('input[name=username]').value;
-  
 
   // kokeillaan ensin kovakoodattuna
   // const body = {
@@ -42,7 +41,7 @@ createUser.addEventListener('click', async (evt) => {
   fetchData(url, options).then((data) => {
     // käsitellään fetchData funktiosta tullut JSON
     console.log(data);
-    // alert("Uusi käyttäjä luotu") // Alertti kun käyttäjän luominen onnistuu
+    alert("Luodaan uusi käyttäjä")
   });
 });
 

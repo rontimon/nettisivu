@@ -195,6 +195,16 @@ async function showUserName() {
   //koodi jolla haet nimen
 showUserName();
 
+// Uloskirjautuminen:
+
+document.getElementById('logoutButton').addEventListener('click', function() {
+  // Poista token localStoragesta
+  localStorage.removeItem('token');
+  // Ohjaa käyttäjä takaisin kirjautumissivulle
+  window.location.href = 'start-auth.html';
+});
+
+
 
 // 1. testataan ensin YKSI endpoint joka ei vaadi tokenia
 // 2. uudelleen strukturoidaan koodi jotta se on modulaarisempi
