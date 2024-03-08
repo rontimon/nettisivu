@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vite App</title>
+  </head>
+
+  <body>
+    <nav>
+      <a href="#createUser">Logo</a>
+      <!-- <a href="#loginUser">Login User</a> -->
+      <a href="#userInfo">Info</a>
+    </nav>
+    <main>
+      <section id="herokuva"></section>
+
+      <section class="content">
+      <!-- <img id="kuva" src="images/logo2.png" alt="logo"> -->
+  
+     
+  
+      <!-- <img id="koiraystävä" src="images/dogfriend.webp" alt="dogfriend"> -->
+      
+      <h2>Long Way</h2>
+  
+      <h3>Kouluttaminen osana ystävyyttä</h3>
+  
+      
+  
+      <!-- Responsive images and centering -->
+      <p>Koiran kouluttaminen on matka, joka vaaditaan kuljettavaksi ajan, kärsivällisyyden ja sitoutumisen kautta. Se on prosessi, jossa luottamuksen ja ystävyyden perusta rakennetaan, ja se voi kestää koko lemmikin eliniän. Kaikki koirat eivät ole samanlaisia; jotkut voivat olla haastavampia koulutettavia kuin toiset. Vaikeuksien kohtaaminen koiran koulutuksessa on ymmärrettävä haaste, mutta tärkeää on muistaa, ettei kukaan ole yksin tässä prosessissa. Jokainen koira on ainutlaatuinen, ja jokainen koulutuskokemus tarjoaa mahdollisuuden oppimiseen ja yhdessä kasvamiseen.</p>
+  
+      <p>Koiran koulutuksen ei nähdä olevan pelkästään temppujen tai käskyjen opettamista; se on viestintäkanavan luomista koiran ja sen omistajan välille. Tämän kautta syvennetään yhteistä ymmärrystä ja vahvistetaan sidettä, mikä tekee arjesta sujuvampaa molemmille. Koulutus tarjoaa rakenteen, joka auttaa koiraa ymmärtämään, mitä siltä odotetaan, ja tämä selkeys on perusta turvalliselle ja onnelliselle yhteiselolle.</p>
+  
+      <p>Koulutuksen haasteiden kohtaaminen voi tuntua ylivoimaiselta, erityisesti kun edistystä mitataan pienin, joskus tuskin havaittavin, askelin. Mutta jokainen onnistuminen, pienikin sellainen, katsotaan olevan juhlan arvoinen. Koiran koulutusprosessissa ei opi ainoastaan koira, myös omistaja oppii tuntemaan paremmin itseään, kärsivällisyytensä rajoja ja kykyään ohjata lemmikkiä läpi haastavien aikojen.</p>
+  
+      <p>Koulutuspäiväkirjan pitäminen tarjoaa ainutlaatuisen tavan seurata edistystä, juhlistaa onnistumisia ja muistella niitä hetkiä, kun ylittämättömiltä tuntuneet esteet voitettiin. Päiväkirja toimii muistutuksena siitä, kuinka pitkälle on tultu, ja se voi inspiroida ja motivoida jatkamaan, vaikka edistyminen tuntuisikin joskus hitaalta.</p>
+  
+      <p>Koiran kouluttaminen on investointi, joka kantaa hedelmää koko yhteisen elämän ajan, syventäen ystävyyttä ja ymmärrystä päivä päivältä.</p>
+  </section>
+
+    
+
+    <div class="container">
+    
+
+    <form class="create_user_form">
+      <h4>Luo uusi käyttäjä</h4>
+      <label for="username">Username</label>
+      <input type="text" name="username" placeholder="Käyttäjänimi" />
+      <label for="password">Password</label>
+      <input type="password" name="password" placeholder="Salasana" />
+      <label for="email">Email</label>
+      <input type="email" name="email" placeholder="Sähköposti" />
+      <input name="submit" type="submit" value="Luo uusi käyttäjä" class="createuser" />
+    </form>
+    
+      
+    <form class="login_form">
+      <h4>Kirjaudu sisään</h4>
+      <label for="username">Username</label>
+      <input type="text" name="username" placeholder="test" />
+      <label for="password">Password</label>
+      <input type="password" name="password" placeholder="test" />
+      <input name="submit" type="submit" value="Kirjaudu sisään" class="loginuser" />
+      <br />
+      <h5>TOKEN:</h5>
+      <div id="loginResponse"></div>
+    </form>
+      
+    
+    </div>
+  </main>  
+
+  <footer>Copyright, LongWay</footer>
+
+  </body>
+
+  <script type="module" src="/start-auth.js"></script>
+</html>
