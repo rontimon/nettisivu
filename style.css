@@ -359,6 +359,8 @@ margin: 0; /* Poistetaan oletusmarginaalit */
   border: 1px solid #ccc; /* Hienovarainen reunus */
 }
 
+
+
 .training-diary-form button {
   background-color: #986627; /* Nappulan taustaväri, sopii yhteen muiden nappuloiden kanssa */
   color: white;
@@ -375,6 +377,120 @@ margin: 0; /* Poistetaan oletusmarginaalit */
 .training-diary-form button:hover {
   background-color: #98652771; /* Tummempi hover-efekti nappulalle */
 }
+
+
+
+
+/* Aikaisemmat päiväkirjamerkinnät tyylittely*/
+
+.diaryEntriesContainer {
+  background-color: #2c1901d7;
+  color: #ffffff;
+  padding: 20px;
+  width: 70%;
+  margin: 20px auto;
+  font-size: 0.9em;
+  font-family: sans-serif;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+  border-radius: 20px;
+  margin-bottom: 300px;
+}
+
+.diaryEntriesContainer th, .diaryEntriesContainer td {
+  padding: 10px;
+  border: 1px solid #ccc;
+}
+
+#fetchEntries {
+  background-color: #986627;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  display: block;
+  margin: 20px auto;
+  font-size: 1em;
+  
+}
+
+#fetchEntries:hover {
+  background-color: #98652771;
+}
+
+
+
+
+/* Päiväkirjamerkintöjen muokkaaminen */
+
+
+
+/* Modal-ikkunan perustyylit */
+.modal {
+  display: none; /* Piilotetaan modal oletuksena */
+  position: fixed; /* Kiinnitetään modal ikkunaan */
+  z-index: 1; /* Varmistetaan, että modal on muiden elementtien päällä */
+  left: 0;
+  top: 0;
+  width: 100%; /* Leveys koko ikkunan levyinen */
+  height: 100%; /* Korkeus koko ikkunan korkeinen */
+  overflow: auto; /* Mahdollistetaan sisällön vieritys, jos tarpeen */
+  background-color: rgba(0, 0, 0, 0.4); /* Musta tausta, hieman läpinäkyvä */
+}
+
+/* Modal-ikkunan sisältö */
+.modal-content {
+  background-color: #fefefe;
+  margin: 15% auto; /* Asetetaan modal keskelle */
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%; /* Leveys 80% keskellä */
+  border-radius: 10px; /* Pyöristetyt kulmat */
+}
+
+/* Sulje-nappulan tyyli modal-ikkunassa */
+.close-button {
+  color: #aaaaaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close-button:hover,
+.close-button:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* Muokkauslomakkeen input-kenttien ja nappulan yhtenäistäminen */
+#edit-diary-form input[type="text"],
+#edit-diary-form input[type="number"],
+#edit-diary-form input[type="date"],
+#edit-diary-form textarea {
+  width: 100%; /* Täytä containerin leveys */
+  padding: 10px; /* Mukavuutta */
+  margin: 8px 0; /* Erota elementit toisistaan */
+  box-sizing: border-box; /* Sisältöön perustuva box-malli */
+  border-radius: 5px; /* Pyöristetyt reunat */
+  border: 1px solid #ccc; /* Hienovarainen kehys */
+}
+
+/* Muokkausnappulan tyyli */
+#edit-diary-form button {
+  background-color: #4CAF50; /* Vihreä, positiivinen toiminto */
+  color: white;
+  padding: 10px 20px;
+  margin: 20px 0;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer; /* Osoitin kursori */
+}
+
+#edit-diary-form button:hover {
+  background-color: #45a049; /* Tummempi vihreä hover-efektille */
+}
+
 
 
   /* Uudet formi tyylittelyt */

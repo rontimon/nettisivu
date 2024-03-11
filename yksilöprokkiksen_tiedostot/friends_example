@@ -1,0 +1,1186 @@
+FRONTEND:
+
+javascript.js:
+
+
+import "./style.css";
+import { fetchData } from "./fetch.js";
+
+document.addEventListener("DOMContentLoaded", function () {
+  const menuToggle = document.querySelector(".menu-toggle");
+  const menu = document.querySelector(".menu");
+
+  menuToggle.addEventListener("click", function () {
+    menu.classList.toggle("show");
+  });
+});
+
+
+const form = document.getElementById('exercise-form');
+console.log(form);
+form.addEventListener('submit', submitDiary);
+const entriesButton = document.querySelector("#fetch-data");
+entriesButton.addEventListener("click", getEntries);
+
+const editModal = document.getElementById("edit-modal");
+const closeButton = document.querySelector(".close-button");
+const editForm = document.getElementById("edit-form");
+
+closeButton.onclick = () => (editModal.style.display = "none");
+window.onclick = (event) => {
+  if (event.target === editModal) {
+    editModal.style.display = "none";
+  }
+};
+
+async function submitDiary(event) {
+    event.preventDefault();
+    const userId = localStorage.getItem('user_id');
+
+    const formData = new FormData(form);
+    const diaryData = {};
+    formData.forEach((value, key) => {
+        diaryData[key] = value;
+        console.log(diaryData);
+    });
+
+    diaryData.user_id = userId;
+
+    try {
+        const url = `http://localhost:3000/api/entries/${userId}`;
+        const token = localStorage.getItem('token');
+        const options = {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(diaryData)
+        };
+    
+        const response = await fetch(url, options);
+        console.log(response);
+        if (!response.ok) {
+          throw new Error('Failed to add diary entry');
+        }
+    
+        // Tyhjennä lomake
+        form.reset();
+        alert('Diary entry added successfully!');
+      } catch (error) {
+        console.error('Error adding diary entry:', error.message);
+        alert('Failed to add diary entry. Please try again.');
+      }
+}
+
+async function getEntries() {
+  const userId = localStorage.getItem("user_id");
+  const url = `http://localhost:3000/api/entries/diaries/${userId}`;
+  const token = localStorage.getItem("token");
+
+  const options = {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  fetchData(url, options).then((data) => {
+    createTable(data);
+  });
+}
+
+function createTable(data) {
+  console.log(data);
+
+  const tbody = document.querySelector(".tbody");
+  tbody.innerHTML = "";
+
+  data.forEach((element) => {
+    console.log(
+      element.entry_date,
+      element.mood,
+      element.weight,
+      element.sleep_hours,
+      element.notes,
+      element.created_at
+    );
+
+    const tr = document.createElement("tr");
+
+    const formattedDate = new Date(element.entry_date).toLocaleDateString(
+      "fi-FI"
+    );
+
+    const td1 = document.createElement("td");
+    td1.innerText = formattedDate;
+
+    const td2 = document.createElement("td");
+    td2.innerText = element.mood;
+
+    const td3 = document.createElement("td");
+    td3.innerText = element.weight;
+
+    const td4 = document.createElement("td");
+    td4.innerText = element.sleep_hours;
+
+    const td5 = document.createElement("td");
+    td5.innerText = element.notes;
+
+    const td6 = document.createElement("td");
+    const deleteButton = document.createElement("button");
+    deleteButton.className = "del";
+    deleteButton.setAttribute("entry-id", element.entry_id);
+    deleteButton.innerText = "Delete";
+    deleteButton.addEventListener("click", deleteEntry);
+    td6.appendChild(deleteButton);
+
+    const td7 = document.createElement("td");
+    const editButton = document.createElement("button");
+    editButton.className = "edit";
+    editButton.setAttribute("entry-id", element.entry_id);
+    editButton.setAttribute("data-entry-id", element.entry_id);
+    editButton.innerText = "Edit";
+    editButton.addEventListener("click", (evt) => openEditModal(evt, data));
+    td7.appendChild(editButton);
+
+    tr.appendChild(td1);
+    tr.appendChild(td2);
+    tr.appendChild(td3);
+    tr.appendChild(td4);
+    tr.appendChild(td5);
+    tr.appendChild(td6);
+    tr.appendChild(td7);
+
+    tbody.appendChild(tr);
+  });
+
+  document
+    .querySelectorAll(".del")
+    .forEach((button) => button.addEventListener("click", deleteEntry));
+  document
+    .querySelectorAll(".edit")
+    .forEach((button) =>
+      button.addEventListener("click", (evt) => openEditModal(evt, data))
+    );
+}
+
+function openEditModal(evt, data) {
+    console.log(evt.target.dataset.entryId);
+  const entryId = parseInt(evt.target.dataset.entryId, 10);
+  console.log("Entry ID:", entryId);
+  const entryData = data.find((entry) => entry.entry_id === entryId);
+
+  document.getElementById("edit-entry-id").value = entryId;
+  document.getElementById("edit-date").value = entryData.entry_date;
+  document.getElementById("edit-mood").value = entryData.mood;
+  document.getElementById("edit-weight").value = entryData.weight;
+  document.getElementById("edit-sleep").value = entryData.sleep_hours;
+  document.getElementById("edit-notes").value = entryData.notes;
+
+  editModal.style.display = "block";
+}
+editForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const formData = new FormData(e.target);
+  const entryId = formData.get("edit-entry-id");
+
+
+  console.log('FormData:', formData);
+
+
+  const url = `http://localhost:3000/api/entries/${entryId}`;
+  const token = localStorage.getItem("token");
+
+  const options = {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({
+      entry_date: formData.get("edit-date"),
+      mood: formData.get("edit-mood"),
+      weight: formData.get("edit-weight"),
+      sleep_hours: formData.get("edit-sleep"),
+      notes: formData.get("edit-notes"),
+    }),
+  };
+
+  fetchData(url, options).then(() => {
+    editModal.style.display = "none";
+    getEntries(); 
+  });
+});
+
+async function deleteEntry(evt) {
+  console.log(evt);
+
+  const id = evt.target.attributes["entry-id"].value;
+  console.log(id);
+
+  const url = `http://localhost:3000/api/entries/${id}`;
+  const token = localStorage.getItem("token");
+
+  const options = {
+    method: "DELETE",
+    headers: {
+      Authorization: "Bearer: " + token,
+    },
+  };
+
+  const answer = confirm("Are you sure you want to delete entry?");
+  if (answer) {
+    fetchData(url, options).then((data) => {
+      console.log(data);
+      getEntries();
+    });
+  }
+}
+
+document.getElementById("fetch-data").addEventListener("click", getEntries);
+
+
+
+
+html.html:
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <title>HRV</title>
+  </head>
+  <body>
+    <nav>
+        <span class="logo">HealthDiary</span>
+        <button class="menu-toggle">☰</button>
+        <ul class="menu">
+            <li class="dropdown">
+                <a href="diary.html">Home</a>
+              </li>
+          <li class="dropdown">
+            <a href="#">Categories</a>
+            <div class="dropdown-content">
+              <a href="exercise.html">Exercise</a>
+              <a href="nutrition.html">Nutrition</a>
+              <a href="diaries.html">Diary Entries</a>
+              <a href="medication.html">Medications</a>
+              <a href="hrv.html">HRV Measurements</a>
+            </div>
+          </li>
+          <li><a href="settings.html">Settings</a></li>
+          <li class="logout"><a href="#">Log Out</a></li>
+        </ul>
+      </nav>
+    <div class="diaries-backround">
+      <form id="exercise-form">
+        <h3>Add New Diary Entry</h3>
+        <label for="date">Date:</label>
+        <input type="date" id="date" name="entry_date" required /><br /><br />
+
+        <label for="type">Mood:</label>
+        <select id="type" name="mood" required>
+          <option value="Happy">Happy</option>
+          <option value="Satisfied">Satisfied</option>
+          <option value="Tired">Tired</option>
+          <option value="Energetic">Energetic</option>
+          <option value="Relaxed">Relaxed</option>
+          <option value="Exhausted">Exhausted</option></select
+        ><br /><br />
+
+        <label for="weight">Weight:</label>
+        <input
+          type="number"
+          id="weight"
+          name="weight"
+          placeholder="Example: 65,5"
+          required
+        /><br /><br />
+
+        <label for="sleep">Sleep:</label>
+        <input
+          type="number"
+          id="sleep"
+          name="sleep_hours"
+          placeholder="hours"
+          required
+        /><br /><br />
+
+        <label for="notes">Notes:</label><br />
+        <textarea
+          id="notes"
+          name="notes"
+          rows="4"
+          cols="50"
+          placeholder="Example: Work was demanding. Spent time with friends."
+        ></textarea
+        ><br /><br />
+        <input type="hidden" id="created_at" name="created_at" value="" />
+        <button type="submit">Add Diary Entry</button>
+      </form>
+      <button id="fetch-data">Get Your Diary Entries</button>
+      <div class="table-container">
+        <table class="styled-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Mood</th>
+              <th>Weight</th>
+              <th>Sleep hours</th>
+              <th>Notes</th>
+              <th>Delete</th>
+              <th>Edit</th>
+            </tr>
+          </thead>
+          <tbody class="tbody"></tbody>
+        </table>
+      </div>
+    </div>
+    <div id="edit-modal" class="modal">
+      <div class="modal-content">
+        <span class="close-button">×</span>
+        <form id="edit-form">
+          <h3>Edit Diary Entry</h3>
+          <input type="hidden" id="edit-entry-id" name="edit-entry-id" required />
+
+          <label for="edit-date">Date:</label>
+          <input type="date" id="edit-date" name="edit-date" required /><br /><br />
+
+          <label for="edit-mood">Mood:</label>
+          <select id="edit-mood" name="edit-mood" required>
+            <option value="Happy">Happy</option>
+            <option value="Satisfied">Satisfied</option>
+            <option value="Tired">Tired</option>
+            <option value="Energetic">Energetic</option>
+            <option value="Relaxed">Relaxed</option>
+            <option value="Exhausted">Exhausted</option></select
+          ><br /><br />
+
+          <label for="edit-weight">Weight:</label>
+          <input
+            type="number"
+            id="edit-weight"
+            name="edit-weight"
+            required
+          /><br /><br />
+
+          <label for="edit-sleep">Sleep hours:</label>
+          <input
+            type="number"
+            id="edit-sleep"
+            name="edit-sleep"
+            required
+          /><br /><br />
+
+          <label for="edit-notes">Notes:</label><br />
+          <textarea id="edit-notes" name="edit-notes" rows="4" cols="50"></textarea
+          ><br /><br />
+
+          <button type="submit">Update Entry</button>
+        </form>
+      </div>
+    </div>
+
+    <script type="module" src="/diaries.js"></script>
+  </body>
+</html>
+
+
+
+
+
+
+BACKEND:
+
+
+entry-controller.mjs:
+
+import {customError} from '../middlewares/error-handler.mjs';
+import {
+  listAllEntries,
+  findEntryById,
+  addEntry,
+  deleteEntryById,
+  updateEntryById,
+  listAllEntriesByUserId,
+  listAllExerciseEntriesByUserId,
+  addExerciseEntry,
+  listHrvMeasurementsByUserId,
+  addHrvmeasurement,
+  listMedicationsByUser,
+  postMedication,
+  deleteExerciseById,
+  deleteMedicationById,
+  deleteHrvById,
+  updateMedicationById,
+  updateExerciseById,
+  listNutritionByUserId,
+  postNutrition,
+  updateNutritionById,
+  deleteNutritionById,
+  updateHrvById
+} from '../models/entry-model.mjs';
+
+const getEntries = async (req, res) => {
+  const result = await listAllEntriesByUserId(req.user.user_id);
+  if (!result.error) {
+    res.json(result);
+  } else {
+    next(new Error(result.error));
+  }
+};
+
+const getEntryById = async (req, res) => {
+  const entry = await findEntryById(req.params.id);
+  if (entry) {
+    res.json(entry);
+  } else {
+    next(customError('Entry not found', 404));
+  }
+};
+
+const postEntry = async (req, res) => {
+  const {user_id, entry_date, mood, weight, sleep_hours, notes} = req.body;
+  if (entry_date && (weight || mood || sleep_hours || notes) && user_id) {
+    const result = await addEntry(req.body);
+    if (result.entry_id) {
+      res.status(201);
+      res.json({message: 'New entry added.', ...result});
+    } else {
+      res.status(500);
+      res.json(result);
+    }
+  } else {
+    res.sendStatus(400);
+  }
+};
+
+const putEntry = async (req, res) => {
+  const entry_id = req.params.id;
+  const {entry_date, mood, weight, sleep_hours, notes} = req.body;
+  // check that all needed fields are included in request
+  if ((entry_date || weight || mood || sleep_hours || notes) && entry_id) {
+    const result = await updateEntryById({entry_id, ...req.body});
+    if (result.error) {
+      return res.status(result.error).json(result);
+    }
+    return res.status(201).json(result);
+  } else {
+    return res.status(400).json({error: 400, message: 'bad request'});
+  }
+};
+
+const deleteEntry = async (req, res) => {
+  const result = await deleteEntryById(req.params.id);
+  if (result.error) {
+    return res.status(result.error).json(result);
+  }
+  return res.json(result);
+};
+
+const deleteNutrition = async (req, res) => {
+  const result = await deleteNutritionById(req.params.id);
+  if (result.error) {
+    return res.status(result.error).json(result);
+  }
+  return res.json(result);
+};
+
+const deleteExercise = async (req, res) => {
+  const result = await deleteExerciseById(req.params.id);
+  if (result.error) {
+    return res.status(result.error).json(result);
+  }
+  return res.json(result);
+};
+
+const deleteMedication = async (req, res) => {
+  const result = await deleteMedicationById(req.params.id);
+  if (result.error) {
+    return res.status(result.error).json(result);
+  }
+  return res.json(result);
+};
+
+const deleteHrv = async (req, res) => {
+  const result = await deleteHrvById(req.params.id);
+  if (result.error) {
+    return res.status(result.error).json(result);
+  }
+  return res.json(result);
+};
+
+const getMedicationsByUser = async (req, res) => {
+  const userId = req.user.user_id;
+  const result = await listMedicationsByUser(userId);
+  if (!result.error) {
+    res.json(result);
+  } else {
+    res.status(500);
+    res.json(result);
+  }
+};
+
+
+
+const postMedicationByUser = async (req, res) => {
+  const {user_id, name, dosage, frequency, start_date, end_date} = req.body;
+  try {
+    const result = await postMedication({
+      user_id,
+      name,
+      dosage,
+      frequency,
+      start_date,
+      end_date
+    });
+    return res.status(201).json(result);
+  } catch (error) {
+    console.error('error:', error);
+    return res.status(500).json({error: 'Database error'});
+  }
+};
+
+const postNutritionByUser = async (req, res) => {
+  const {user_id, entry_date, calories_consumed, protein_grams, carbohydrates_grams, fat_grams, notes} = req.body;
+  try {
+    const result = await postNutrition({
+      user_id,
+      entry_date,
+      calories_consumed,
+      protein_grams,
+      carbohydrates_grams,
+      fat_grams,
+      notes
+    });
+    return res.status(201).json(result);
+  } catch (error) {
+    console.error('error:', error);
+    return res.status(500).json({error: 'Database error'});
+  }
+};
+
+const putMedication = async (req, res) => {
+  const medication_id = req.params.id;
+  const {name, dosage, frequency, start_date, end_date} = req.body;
+  // check that all needed fields are included in request
+  if ((name || dosage || frequency || start_date || end_date) && medication_id) {
+    const result = await updateMedicationById({medication_id, ...req.body});
+    if (result.error) {
+      return res.status(result.error).json(result);
+    }
+    return res.status(201).json(result);
+  } else {
+    return res.status(400).json({error: 400, message: 'bad request'});
+  }
+};
+
+const putNutrition = async (req, res) => {
+  const nutrition_id = req.params.id;
+  const {entry_date, calories_consumed, protein_grams, carbohydrates_grams, fat_grams, notes} = req.body;
+  if ((entry_date || calories_consumed || protein_grams || carbohydrates_grams || fat_grams || notes) && nutrition_id) {
+    const result = await updateNutritionById({nutrition_id, ...req.body});
+    if (result.error) {
+      return res.status(result.error).json(result);
+    }
+    return res.status(201).json(result);
+  } else {
+    return res.status(400).json({error: 400, message: 'bad request'});
+  }
+};
+
+const getNutritionByUser = async (req, res) => {
+  const userId = req.user.user_id;
+
+  try {
+
+    const entries = await listNutritionByUserId(userId);
+    return res.json(entries);
+  } catch (error) {
+    console.error('getNutritionByUser error:', error);
+    return res.status(500).json({error: 'Database error'});
+  }
+};
+
+const getExerciseEntriesByUser = async (req, res) => {
+  const userId = req.user.user_id;
+
+  try {
+    const entries = await listAllExerciseEntriesByUserId(userId);
+    return res.json(entries);
+  } catch (error) {
+    console.error('getExerciseEntriesByUser error:', error);
+    return res.status(500).json({error: 'Database error'});
+  }
+};
+
+const getHrvMeasurementsByUser = async (req, res) => {
+  const userId = req.user.user_id;
+
+  try {
+    const entries = await listHrvMeasurementsByUserId(userId);
+    return res.json(entries);
+  } catch (error) {
+    console.error('error:', error);
+    return res.status(500).json({error: 'Database error'});
+  }
+};
+
+const putExercise = async (req, res) => {
+  const exercise_id = req.params.id;
+  const {type, duration, intensity, date} = req.body;
+  // check that all needed fields are included in request
+  if ((type || duration || intensity || date ) && exercise_id) {
+    const result = await updateExerciseById({exercise_id, ...req.body});
+    if (result.error) {
+      return res.status(result.error).json(result);
+    }
+    return res.status(201).json(result);
+  } else {
+    return res.status(400).json({error: 400, message: 'bad request'});
+  }
+};
+
+const postExerciseEntry = async (req, res) => {
+  const {user_id, date, type, duration, intensity} = req.body;
+
+  try {
+    const result = await addExerciseEntry({
+      user_id,
+      date,
+      type,
+      duration,
+      intensity,
+    });
+
+    return res.status(201).json(result);
+  } catch (error) {
+    console.error('postExerciseEntry error:', error);
+    return res.status(500).json({error: 'Database error'});
+  }
+};
+
+const postHrvDataByUser = async (req, res) => {
+  const {user_id, measurement_date, time_of_day, hrv_value, notes} = req.body;
+
+  try {
+    const result = await addHrvmeasurement({
+      user_id,
+      measurement_date,
+      time_of_day,
+      hrv_value,
+      notes,
+    });
+    return res.status(201).json(result);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({error: 'Database error'});
+  }
+};
+
+const putHrv = async (req, res) => {
+  const hrv_id = req.params.id;
+  const {measurement_date, time_of_day, hrv_value, notes} = req.body;
+  if ((measurement_date || time_of_day || hrv_value || notes ) && hrv_id) {
+    const result = await updateHrvById({hrv_id, ...req.body});
+    if (result.error) {
+      return res.status(result.error).json(result);
+    }
+    return res.status(201).json(result);
+  } else {
+    return res.status(400).json({error: 400, message: 'bad request'});
+  }
+};
+
+export {
+  getEntries,
+  getEntryById,
+  postEntry,
+  putEntry,
+  deleteEntry,
+  getExerciseEntriesByUser,
+  postExerciseEntry,
+  getHrvMeasurementsByUser,
+  postHrvDataByUser,
+  getMedicationsByUser,
+  postMedicationByUser,
+  deleteExercise,
+  deleteMedication,
+  deleteHrv,
+  putMedication,
+  putExercise,
+  getNutritionByUser,
+  postNutritionByUser,
+  putNutrition,
+  deleteNutrition,
+  putHrv
+};
+
+
+
+
+
+
+
+entry-model.mjs:
+
+
+// Note: db functions are async and must be
+// called with await from the controller
+// How to handle errors in controller?
+import promisePool from '../utils/database.mjs';
+
+const listAllEntries = async () => {
+  try {
+    const [rows] = await promisePool.query('SELECT * FROM DiaryEntries');
+    console.log('rows', rows);
+    return rows;
+  } catch (e) {
+    console.error('error', e.message);
+    return {error: e.message};
+  }
+};
+
+
+const findEntryById = async (id) => {
+  try {
+    const [rows] = await promisePool.query(
+      'SELECT * FROM DiaryEntries WHERE entry_id = ?',
+      [id]
+    );
+    console.log('rows', rows);
+    return rows[0];
+  } catch (e) {
+    console.error('error', e.message);
+    return {error: e.message};
+  }
+};
+
+const addEntry = async (entry) => {
+  const {user_id, entry_date, mood, weight, sleep_hours, notes} = entry;
+  const sql = `INSERT INTO DiaryEntries 
+  (user_id, entry_date, mood, weight, sleep_hours, notes)
+               VALUES (?, ?, ?, ?, ?, ?)`;
+  const params = [user_id, entry_date, mood, weight, sleep_hours, notes];
+  try {
+    const rows = await promisePool.query(sql, params);
+    console.log('rows', rows);
+    return {entry_id: rows[0].insertId};
+  } catch (e) {
+    console.error('error', e.message);
+    return {error: e.message};
+  }
+};
+
+const updateEntryById = async (entry) => {
+  const {entry_id, entry_date, mood, weight, sleep_hours, notes} = entry;
+  try {
+    const sql =
+      'UPDATE DiaryEntries SET entry_date=?, mood=?, weight=?, sleep_hours=?, notes=? WHERE entry_id=?';
+    const params = [entry_date, mood, weight, sleep_hours, notes, entry_id];
+    const [result] = await promisePool.query(sql, params);
+    // console.log(result);
+    if (result.affectedRows === 0) {
+      return {error: 404, message: 'entry not found'};
+    }
+    return {message: 'entry data updated', entry_id};
+  } catch (error) {
+    // fix error handling
+    // now duplicate entry error is generic 500 error, should be fixed to 400 ?
+    console.error('updateEntryById', error);
+    return {error: 500, message: 'db error'};
+  }
+};
+
+const updateMedicationById = async (entry) => {
+  const {medication_id, name, dosage, frequency, start_date, end_date} = entry;
+  try {
+    const sql =
+      'UPDATE Medications SET name=?, dosage=?, frequency=?, start_date=?, end_date=? WHERE medication_id=?';
+    const params = [name, dosage, frequency, start_date, end_date, medication_id];
+    const [result] = await promisePool.query(sql, params);
+    // console.log(result);
+    if (result.affectedRows === 0) {
+      return {error: 404, message: 'entry not found'};
+    }
+    return {message: 'Medication data updated', medication_id};
+  } catch (error) {
+    // fix error handling
+    // now duplicate entry error is generic 500 error, should be fixed to 400 ?
+    console.error('updateMedicationById', error);
+    return {error: 500, message: 'db error'};
+  }
+};
+
+const updateNutritionById = async (entry) => {
+  const {nutrition_id, entry_date, calories_consumed, protein_grams, carbohydrates_grams, fat_grams, notes} = entry;
+  try {
+    const sql =
+      'UPDATE Nutrition SET entry_date=?, calories_consumed=?, protein_grams=?, carbohydrates_grams=?, fat_grams=?, notes=? WHERE nutrition_id=?';
+    const params = [entry_date, calories_consumed, protein_grams, carbohydrates_grams, fat_grams, notes, nutrition_id];
+    const [result] = await promisePool.query(sql, params);
+    if (result.affectedRows === 0) {
+      return {error: 404, message: 'entry not found'};
+    }
+    return {message: 'Nutrition data updated', nutrition_id};
+  } catch (error) {
+    // fix error handling
+    // now duplicate entry error is generic 500 error, should be fixed to 400 ?
+    console.error('updateNutritionById', error);
+    return {error: 500, message: 'db error'};
+  }
+};
+
+const updateExerciseById = async (entry) => {
+  const {exercise_id, type, duration, intensity, date} = entry;
+  try {
+    const sql =
+      'UPDATE Exercises SET type=?, duration=?, intensity=?, date=? WHERE exercise_id=?';
+    const params = [type, duration, intensity, date, exercise_id];
+    const [result] = await promisePool.query(sql, params);
+    // console.log(result);
+    if (result.affectedRows === 0) {
+      return {error: 404, message: 'entry not found'};
+    }
+    return {message: 'Exercise data updated', exercise_id};
+  } catch (error) {
+    // fix error handling
+    // now duplicate entry error is generic 500 error, should be fixed to 400 ?
+    console.error('updateExerciseById', error);
+    return {error: 500, message: 'db error'};
+  }
+};
+
+
+const updateHrvById = async (entry) => {
+  const {hrv_id, measurement_date, time_of_day, hrv_value, notes} = entry;
+  try {
+    const sql =
+      'UPDATE HRVMeasurements SET measurement_date=?, time_of_day=?, hrv_value=?, notes=? WHERE hrv_id=?';
+    const params = [measurement_date, time_of_day, hrv_value, notes, hrv_id];
+    const [result] = await promisePool.query(sql, params);
+    if (result.affectedRows === 0) {
+      return {error: 404, message: 'entry not found'};
+    }
+    return {message: 'Hrv data updated', hrv_id};
+  } catch (error) {
+    // fix error handling
+    // now duplicate entry error is generic 500 error, should be fixed to 400 ?
+    console.error('updatHrvById', error);
+    return {error: 500, message: 'db error'};
+  }
+};
+
+const deleteEntryById = async (id) => {
+  try {
+    const sql = 'DELETE FROM DiaryEntries WHERE entry_id=?';
+    const params = [id];
+    const [result] = await promisePool.query(sql, params);
+    if (result.affectedRows === 0) {
+      return {error: 404, message: 'entry not found'};
+    }
+    return {message: 'entry deleted', entry_id: id};
+  } catch (error) {
+    console.error('deleteEntryById', error);
+    return {error: 500, message: 'db error'};
+  }
+};
+
+const deleteNutritionById = async (id) => {
+  try {
+    const sql = 'DELETE FROM Nutrition WHERE nutrition_id=?';
+    const params = [id];
+    const [result] = await promisePool.query(sql, params);
+    if (result.affectedRows === 0) {
+      return {error: 404, message: 'entry not found'};
+    }
+    return {message: 'entry deleted', entry_id: id};
+  } catch (error) {
+    console.error('deleteNutritionById', error);
+    return {error: 500, message: 'db error'};
+  }
+};
+
+const deleteMedicationById = async(id) => {
+  try {
+    const sql = 'DELETE FROM Medications WHERE medication_id=?';
+    const params = [id];
+    const [result] = await promisePool.query(sql, params);
+    if (result.affectedRows === 0) {
+      return {error: 404, message: 'entry not found'};
+    }
+    return {message: 'medication deleted', entry_id: id};
+  } catch (error) {
+    console.error('deleteMedicationById', error);
+    return {error: 500, message: 'db error'};
+  }
+};
+
+const deleteHrvById = async(id) => {
+  try {
+    const sql = 'DELETE FROM HRVMeasurements WHERE hrv_id=?';
+    const params = [id];
+    const [result] = await promisePool.query(sql, params);
+    if (result.affectedRows === 0) {
+      return {error: 404, message: 'entry not found'};
+    }
+    return {message: 'hrv deleted', hrv_id: id};
+  } catch (error) {
+    console.error('deleteHrvById', error);
+    return {error: 500, message: 'db error'};
+  }
+};
+
+const deleteExerciseById = async(id) => {
+  try {
+    const sql = 'DELETE FROM Exercises WHERE exercise_id=?';
+    const params = [id];
+    const [result] = await promisePool.query(sql, params);
+    if (result.affectedRows === 0) {
+      return {error: 404, message: 'entry not found'};
+    }
+    return {message: 'exercise deleted', entry_id: id};
+  } catch (error) {
+    console.error('deleteExerciseById', error);
+    return {error: 500, message: 'db error'};
+  }
+};
+
+const addExerciseEntry = async (entry) => {
+  const { user_id, date, type, duration, intensity } = entry;
+  try {
+    const sql = `INSERT INTO Exercises (user_id, date, type, duration, intensity) 
+                 VALUES (?, ?, ?, ?, ?)`;
+    const params = [user_id, date, type, duration, intensity];
+    const [result] = await promisePool.query(sql, params);
+    if (result && result.insertId) {
+      return { message: 'Exercise entry added', exercise_id: result.insertId };
+    } else {
+      throw new Error('Failed to add exercise entry');
+    }
+  } catch (e) {
+    console.error('addExerciseEntry error:', e.message);
+    return { error: e.message };
+  }
+};
+
+const addHrvmeasurement = async (entry) => {
+  const { user_id, measurement_date, time_of_day, hrv_value, notes } = entry;
+  try {
+    const sql = `INSERT INTO HRVMeasurements (user_id, measurement_date, time_of_day, hrv_value, notes ) 
+                 VALUES (?, ?, ?, ?, ?)`;
+    const params = [user_id, measurement_date, time_of_day, hrv_value, notes ];
+    const [result] = await promisePool.query(sql, params);
+    if (result && result.insertId) {
+      return { message: 'HRV measurement added'};
+    } else {
+      throw new Error('Failed to add HRV measurement');
+    }
+  } catch (e) {
+    console.error(e.message);
+    return { error: e.message };
+  }
+};
+
+const postMedication = async (entry) => {
+  const { user_id, name, dosage, frequency, start_date, end_date } = entry;
+  try {
+    const sql = `INSERT INTO Medications (user_id, name, dosage, frequency, start_date, end_date ) 
+    VALUES (?, ?, ?, ?, ?, ?)`;
+    const params = [user_id, name, dosage, frequency, start_date, end_date ];
+    const [result] = await promisePool.query(sql, params);
+    if (result && result.insertId) {
+      return { message: 'Medications added'};
+    } else {
+      throw new Error('Failed to add Medications');
+    }
+  } catch (e) {
+    console.error(e.message);
+    return { error: e.message };
+  }
+};
+
+const postNutrition = async (entry) => {
+  const { user_id, entry_date, calories_consumed, protein_grams, carbohydrates_grams, fat_grams, notes } = entry;
+  try {
+    const sql = `INSERT INTO Nutrition (user_id, entry_date, calories_consumed, protein_grams, carbohydrates_grams, fat_grams, notes ) 
+    VALUES (?, ?, ?, ?, ?, ?, ?)`;
+    const params = [user_id, entry_date, calories_consumed, protein_grams, carbohydrates_grams, fat_grams, notes ];
+    const [result] = await promisePool.query(sql, params);
+    if (result && result.insertId) {
+      return { message: 'Nutrition entry added'};
+    } else {
+      throw new Error('Failed to add Nutrition entry');
+    }
+  } catch (e) {
+    console.error(e.message);
+    return { error: e.message };
+  }
+};
+
+const listMedicationsByUser = async (id) => {
+  try {
+    const sql = 'SELECT * FROM Medications WHERE user_id = ?';
+    const params = [id];
+    const [rows] = await promisePool.query(sql, params);
+    console.log('rows', rows);
+    return rows;
+  } catch (e) {
+    console.error('error', e.message);
+    return {error: e.message};
+  }
+};
+
+const listAllEntriesByUserId = async (id) => {
+  try {
+    const sql = 'SELECT * FROM DiaryEntries WHERE user_id = ?';
+    const params = [id];
+    const [rows] = await promisePool.query(sql, params);
+    console.log('rows', rows);
+    return rows;
+  } catch (e) {
+    console.error('error', e.message);
+    return {error: e.message};
+  }
+};
+
+const listAllExerciseEntriesByUserId = async (id) => {
+  try {
+    const sql = 'SELECT * FROM Exercises WHERE user_id = ?';
+    const params = [id];
+    const [rows] = await promisePool.query(sql, params);
+    return rows;
+  } catch (e) {
+    console.error('error', e.message);
+    return {error: e.message};
+  }
+};
+
+const listNutritionByUserId = async (id) => {
+  try {
+    const sql = 'SELECT * FROM Nutrition WHERE user_id = ?';
+    const params = [id];
+    const [rows] = await promisePool.query(sql, params);
+    return rows;
+  } catch (e) {
+    console.error('error', e.message);
+    return {error: e.message};
+  }
+};
+
+const listHrvMeasurementsByUserId = async (id) => {
+  try {
+    const sql = 'SELECT * FROM HRVMeasurements WHERE user_id = ?';
+    const params = [id];
+    const [rows] = await promisePool.query(sql, params);
+    return rows;
+  } catch (e) {
+    console.error('error', e.message);
+    return {error: e.message};
+  }
+};
+
+export {
+  listAllEntries,
+  listAllEntriesByUserId,
+  findEntryById,
+  addEntry,
+  updateEntryById,
+  deleteEntryById,
+  addExerciseEntry,
+  listAllExerciseEntriesByUserId,
+  listHrvMeasurementsByUserId,
+  addHrvmeasurement,
+  listMedicationsByUser,
+  postMedication,
+  deleteExerciseById,
+  deleteMedicationById,
+  deleteHrvById,
+  updateMedicationById,
+  updateExerciseById,
+  listNutritionByUserId,
+  postNutrition,
+  updateNutritionById,
+  deleteNutritionById,
+  updateHrvById
+
+};
+
+
+
+
+
+
+
+
+entry-router.mjs:
+
+
+import express from 'express';
+import {
+  getEntries,
+  getEntryById,
+  postEntry,
+  putEntry,
+  deleteEntry,
+  getExerciseEntriesByUser,
+  postExerciseEntry,
+  getHrvMeasurementsByUser,
+  postHrvDataByUser,
+  getMedicationsByUser,
+  postMedicationByUser,
+  deleteExercise,
+  deleteMedication,
+  deleteHrv,
+  putMedication,
+  putExercise,
+  getNutritionByUser,
+  postNutritionByUser,
+  putNutrition,
+  deleteNutrition,
+  putHrv,
+} from '../controllers/entry-controller.mjs';
+import {authenticateToken} from '../middlewares/authentication.mjs';
+
+const entryRouter = express.Router();
+
+entryRouter.route('/diaries/:id')
+.get(authenticateToken, getEntries)
+
+entryRouter.route('/medications/:id')
+.get(authenticateToken, getMedicationsByUser)
+.post(authenticateToken, postMedicationByUser)
+.put(authenticateToken, putMedication)
+.delete(authenticateToken, deleteMedication);
+
+entryRouter.route('/:id')
+.post(authenticateToken, postEntry)
+.get(getEntryById)
+.put(authenticateToken, putEntry)
+.delete(authenticateToken, deleteEntry);
+
+entryRouter.route('/exercise/:id')
+.get(authenticateToken, getExerciseEntriesByUser)
+.put(authenticateToken, putExercise)
+.post(authenticateToken, postExerciseEntry)
+.delete(authenticateToken, deleteExercise);
+
+entryRouter.route('/hrv/:id')
+.get(authenticateToken, getHrvMeasurementsByUser)
+.put(authenticateToken, putHrv)
+.post(authenticateToken, postHrvDataByUser)
+.delete(authenticateToken, deleteHrv);
+
+entryRouter.route('/nutrition/:id')
+.get(authenticateToken, getNutritionByUser)
+.post(authenticateToken, postNutritionByUser)
+.put(authenticateToken, putNutrition)
+.delete(authenticateToken, deleteNutrition);
+
+
+export default entryRouter;
