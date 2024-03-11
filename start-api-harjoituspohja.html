@@ -25,8 +25,8 @@
 
 
     <!-- <h3>Päiväkirjasi</h3> -->
-
-    <form class="training-diary-form">
+  <div class="training-diary-form">
+    <form id="diary-form">
       <input type="date" name="entry_date" required>
       <label for="mood">Päivän mood? (1-10):</label><br>
       <input type="range" id="mood" name="mood" min="1" max="10" value="5" oninput="moodValue.value = this.value" style="width: 100%;">
@@ -36,7 +36,7 @@
       <textarea name="goals" placeholder="Tavoitteet"></textarea>
       <button type="submit">Lisää merkintä</button>
     </form>
-    
+  </div>  
 
     <button id="fetchEntries">Hae aikaisemmat päiväkirjamerkintäsi</button>
     <table class="diaryEntriesContainer">

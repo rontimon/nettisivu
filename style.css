@@ -326,6 +326,7 @@ margin: 0; /* Poistetaan oletusmarginaalit */
     padding: 14px 16px;
     text-decoration: none;
     margin-top: 50px;
+    
   }
   #name {
     font-weight: bolder;
@@ -334,50 +335,57 @@ margin: 0; /* Poistetaan oletusmarginaalit */
   /* Päiväkirjamerkintöjen tyylittely */
 
   /* Training Diary Form Tyylittely */
-.training-diary-form {
-  background-color: #2c1901d7; /* Sama taustaväri kuin muilla formeilla */
-  padding: 20px;
-  font-weight: bold;
-  width: 70%; /* Sopiva leveys formin sisällölle */
-  font-size: 0.9em;
-  font-family: sans-serif;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15); /* Lisätään hieman varjostusta */
-  border-radius: 20px; /* Pyöristetyt reunat kuten muissakin formeissa */
-  margin: 50px auto; /* Keskitetään formi */
-}
-
-/* Yhtenäiset input-tyylit */
-.training-diary-form input[type="text"],
-.training-diary-form input[type="number"],
-.training-diary-form input[type="date"],
-.training-diary-form textarea {
-  width: 100%;
-  padding: 10px;
-  margin: 8px 0;
-  box-sizing: border-box;
-  border-radius: 5px; /* Pyöristetyt input-kenttien reunat */
-  border: 1px solid #ccc; /* Hienovarainen reunus */
-}
-
-
-
-.training-diary-form button {
-  background-color: #986627; /* Nappulan taustaväri, sopii yhteen muiden nappuloiden kanssa */
-  color: white;
-  padding: 10px 15px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  display: block;
-  width: max-content;
-  margin: 20px auto; /* Keskitetään nappula */
-  font-size: 1em;
-}
-
-.training-diary-form button:hover {
-  background-color: #98652771; /* Tummempi hover-efekti nappulalle */
-}
-
+  #diary-form {
+    background-color: #2c1901d5; /* Taustaväri */
+    padding: 20px;
+    width: 70%; /* Leveys */
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15); /* Varjostus */
+    border-radius: 20px; /* Pyöristetyt reunat */
+    margin: 50px auto; /* Keskitetty */
+    margin-top: 10px;
+    margin-bottom: 40px;
+    display: flex; /* Flexbox-asettelu */
+    flex-direction: column; /* Lapsielementit pystysuunnassa */
+    align-items: center; /* Keskitetään sisältö */
+  }
+  
+  /* Form elementin tyylit, kun se on .training-diary-form sisällä */
+  .training-diary-form form {
+    width: 100%; /* Asetetaan leveydeksi 100% containerista */
+    font-weight: bold;
+    font-size: 0.9em;
+    font-family: sans-serif;
+  }
+  
+  /* Input ja textarea-tyylit pysyvät samana */
+  .training-diary-form input[type="text"],
+  .training-diary-form input[type="number"],
+  .training-diary-form input[type="date"],
+  .training-diary-form textarea {
+    width: calc(100% - 20px); /* Vähennetään padding */
+    padding: 10px;
+    margin: 8px 0;
+    box-sizing: border-box;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+  
+  /* Button-tyylit pysyvät samana */
+  .training-diary-form button {
+    background-color: #986627;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    display: block;
+    margin: 20px 0; /* Marginaali säätö */
+    font-size: 1em;
+  }
+  
+  .training-diary-form button:hover {
+    background-color: #98652771;
+  }
 
 
 
@@ -415,7 +423,7 @@ margin: 0; /* Poistetaan oletusmarginaalit */
 }
 
 #fetchEntries:hover {
-  background-color: #98652771;
+  background-color: #7a4a0fc5;
 }
 
 

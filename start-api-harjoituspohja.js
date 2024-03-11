@@ -38,7 +38,7 @@ async function showUserName(token) {
 };
 
 
-const form = document.getElementsByClassName('training-diary-form');
+const form = document.getElementById('diary-form');
 console.log(form);
 form.addEventListener('submit', submitDiary);
 const entriesButton = document.querySelector("#fetchEntries");
