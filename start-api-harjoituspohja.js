@@ -69,7 +69,7 @@ async function submitDiary(event) {
     diaryData.user_id = userId;
 
     try {
-        const url = `http://localhost:3000/api/entries/${userId}`;
+        const url = `http://localhost:3000/api/entries/diary/${userId}`;
         const token = localStorage.getItem('token');
         const options = {
             method: 'POST',

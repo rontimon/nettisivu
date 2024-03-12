@@ -94,6 +94,7 @@ loginUser.addEventListener('click', async (evt) => {
     } else {
       alert(data.message);
       localStorage.setItem('name', data.user.username);
+      localStorage.setItem('user_id', data.user.user_id);
       // siirrytään oikealle sivulle kun kirjautuminen on onnistunut
       window.location.href = 'start-api-harjoituspohja.html';
     };
