@@ -48,10 +48,10 @@ const editDiary = document.getElementById("edit-diary");
 const closeButton = document.querySelector(".close-button");
 const editForm = document.getElementById("edit-diary-form");
 
-closeButton.onclick = () => (editModal.style.display = "none");
+closeButton.onclick = () => (editDiary.style.display = "none");
 window.onclick = (event) => {
-  if (event.target === editModal) {
-    editModal.style.display = "none";
+  if (event.target === editDiary) {
+    editDiary.style.display = "none";
   }
 };
 
@@ -88,7 +88,7 @@ async function submitDiary(event) {
 
         // Tyhjennetään lomake
         form.reset();
-        alert('diary entry added succesfully!');
+        alert('Päiväkirjamerkintä lisätty!');
     }   catch (error) {
         console.error('Error adding diary entry:', error.message);
         alert('Päiväkirjamerkinnän lisääminen epäonnistui, Yritä uudelleen.');
@@ -98,7 +98,7 @@ async function submitDiary(event) {
 
 async function getDiaryEntries() {
     const userId = localStorage.getItem("user_id");
-    const url = `http://localhost:3000/api/entries/diaries/${userId}`;
+    const url = `http://localhost:3000/api/entries/diary/${userId}`;
     const token = localStorage.getItem("token");
 
     const options = {
@@ -116,7 +116,7 @@ async function getDiaryEntries() {
 function createTable(data) {
     console.log(data);
 
-    const tbody = document.querySelector(".diary-tbody");
+    const tbody = document.querySelector(".tbody");
     tbody.innerHTML = "";
 
     data.forEach((element) => {
@@ -152,7 +152,7 @@ function createTable(data) {
         const td6 = document.createElement("td");
         const deleteButton = document.createElement("button");
         deleteButton.className = "del";
-        deleteButton.setAttribute("entry-id", element.diary_id);
+        deleteButton.setAttribute("diary-id", element.diary_id);
         deleteButton.innerText = "Poista";
         deleteButton.addEventListener("click", deleteEntry);
         td6.appendChild(deleteButton);
@@ -160,10 +160,10 @@ function createTable(data) {
         const td7 = document.createElement("td");
         const editButton = document.createElement("button");
         editButton.className = "edit";
-        editButton.setAttribute("entry-id", element.diary_id);
+        editButton.setAttribute("diary-id", element.diary_id);
         editButton.setAttribute("data-entry-id", element.diary_id);
         editButton.innerText = "Muokkaa";
-        editButton.addEventListener("click", (evt) => openEditModal(evt, data));
+        editButton.addEventListener("click", (evt) => openEditDiary(evt, data));
         td7.appendChild(editButton);
 
         tr.appendChild(td1);
@@ -178,17 +178,16 @@ function createTable(data) {
     });
 
     document
-        .querySelector(".del")
+        .querySelectorAll(".del")
         .forEach((button) => button.addEventListener("click", deleteEntry));
     document
-        .querySelector(".edit")
-        .forEach((button) =>
-            button.addEventListener("click", (evt) => openEditModal(evt, data))
-        );   
+        .querySelectorAll(".edit")
+        .forEach((button) => button.addEventListener("click", (evt) => openEditDiary(evt, data))
+    );   
 }
 
 
-function openEditModal(evt, data) {
+function openEditDiary(evt, data) {
     console.log(evt.target.dataset.entryId);
     const entryId = parseInt(evt.target.dataset.entryId, 10);
     console.log("Entry ID:", entryId);
@@ -201,8 +200,9 @@ function openEditModal(evt, data) {
     document.getElementById("edit-notes").value = entryData.notes;
     document.getElementById("edit-goals").value = entryData.goals;
 
-    editModal.style.display = "block";
+    editDiary.style.display = "block";
 }
+
 
 editForm.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -212,7 +212,8 @@ editForm.addEventListener("submit", async (e) => {
 
     console.log('FormData', formData);
 
-    const url = `http://localhost:3000/api/entries/${entryId}`;
+        
+    const url = `http://localhost:3000/api/entries/diary/${entryId}`;
     const token = localStorage.getItem("token");
 
     const options = {
@@ -229,27 +230,29 @@ editForm.addEventListener("submit", async (e) => {
           goals: formData.get("edit-goals"),
         }),
       };
-    
+
+      console.log('options', options);
       fetchData(url, options).then(() => {
-        editModal.style.display = "none";
-        getEntries(); 
+        editDiary.style.display = "none";
+        getDiaryEntries(); 
       });
+    
     
 });
 
 async function deleteEntry(evt) {
     console.log(evt);
 
-    const id = evt.target.attributes["entry-id"].value;
+    const id = evt.target.attributes["diary-id"].value;
     console.log(id);
 
-    const url = `http://localhost:3000/api/entries/${id}`;
+    const url = `http://localhost:3000/api/entries/diary/${id}`;
     const token = localStorage.getItem("token");
 
     const options = {
         method: "DELETE",
         headers: {
-          Authorization: "Bearer: " + token,
+          Authorization: "Bearer " + token,
         },
       };
     
@@ -257,49 +260,12 @@ async function deleteEntry(evt) {
       if (answer) {
         fetchData(url, options).then((data) => {
           console.log(data);
-          getEntries();
+          getDiaryEntries();
         });
       }
 }
 
 document.getElementById("fetchEntries").addEventListener("click", getDiaryEntries);
 
-// async function submitDiary(entry) {
-//     const response = await fetch('/api/entries', {
-//         method: 'POST',
-//         headers: {
-//             'Content-Type': 'application/json',
-//             'Authorization': `Bearer ${localStorage.getItem('token')}`
-//         },
-//         body: JSON.stringify(entry)
-//     });
-//     return response.json();
-// }
 
-// async function fetchDiaryEntries() {
-//     const response = await fetch('/api/entries', {
-//         method: 'GET',
-//         headers: {
-//             'Authorization': `Bearer ${localStorage.getItem('token')}`
-//         }
-//     });
-//     return response.json();
-// }
-
-// async function updateDiaryEntries() {
-//     const entries = await fetchDiaryEntries();
-//     const entriesTableBody = document.querySelector('#entriesTable tbody');
-//     entriesTableBody.innerHTML = '';
-
-//     entries.forEach(entry => {
-//         const row = `<tr>
-//             <td>${entry.entry_date}</td>
-//             <td>${entry.mood}</td>
-//             <td>${entry.training_time}</td>
-//             <td>${entry.notes}</td>
-//             <td>${entry.goals}</td>
-//         </tr>`;
-//         entriesTableBody.innerHTML += row;
-//     });
-// }
 

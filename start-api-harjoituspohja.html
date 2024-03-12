@@ -44,14 +44,14 @@
         <tr>
           <th>Päivämäärä</th>
           <th>Mieliala</th>
-          <th>Treenin kesto</th>
+          <th>Treenin kesto (min)</th>
           <th>Merkinnät</th>
           <th>Tavoitteet</th>
           <th>Poista</th>
           <th>Muokkaa</th>
         </tr>
       </thead>
-      <tbody class="diary-tbody">
+      <tbody class="tbody">
         <!-- Tänne haetaan päiväkirjamerkinnät -->
       </tbody>
     </table>
@@ -61,26 +61,26 @@
     <div id="edit-diary" class="modal">
       <div class="modal-content">
         <span class="close-button">×</span>
+        <h3>Muokkaa merkintöjäsi</h3>
         <form id="edit-diary-form">
-          <h3>Edit Diary Entry</h3>
           <input type="hidden" id="edit-diary-id" name="edit-diary-id" required>
+
+          <label for="edit-entry-date">Päivämäärä:</label>
+          <input type="date" id="edit-entry-date" name="edit-entry_date"><br>
+
+          <label for="edit-mood">Mieliala:</label>
+          <input type="number" id="edit-mood" name="edit-mood" min="1" max="10"><br>
+
+          <label for="edit-training-time">Treenin kesto:</label>
+          <input type="text" id="edit-training-time" name="edit-training_time"><br>
+
+          <label for="edit-notes">Merkinnät:</label>
+          <textarea id="edit-notes" name="edit-notes"></textarea><br>
+
+          <label for="edit-goals">Tavoitteet:</label>
+          <textarea id="edit-goals" name="edit-goals"></textarea><br>
           
-          <label for="edit-entry-date">Date:</label>
-          <input type="date" id="edit-entry-date" name="entry_date"><br><br>
-          
-          <label for="edit-mood">Mood:</label>
-          <input type="number" id="edit-mood" name="mood" min="1" max="10"><br><br>
-          
-          <label for="edit-training-time">Training Time:</label>
-          <input type="text" id="edit-training-time" name="training_time"><br><br>
-          
-          <label for="edit-notes">Notes:</label>
-          <textarea id="edit-notes" name="notes"></textarea><br><br>
-          
-          <label for="edit-goals">Goals:</label>
-          <textarea id="edit-goals" name="goals"></textarea><br><br>
-          
-          <button type="submit">Update Entry</button>
+          <button type="submit">Päivitä Merkinnät</button>
         </form>
       </div>
     </div>
@@ -96,77 +96,8 @@
   </body>
   
   <script type="module" src="/start-api-harjoituspohja.js"></script>
+  
   <!-- <script type="module" src="/start-auth.js"></script> -->
 </html>
 
-    <!-- <h3>/api/users</h3> -->
-
-   <!-- <p>
-          Hae käyttäjän tiedot painamalla alla olevaa nappia. Tämä hakee tiedot sekä luo taulukon
-          tbody osan. Jokaiselle riville luodaan nappula. Info hakee yksittäisen rivin tiedot ja
-          avaa dialogin. Delete poistaa yksittäisen rivin ja varmistaa tapahtuman confirm()
-          metodilla.
-        </p> -->
-
-        <!-- <pre><code>
-          # Get all users (requires token)
-          GET http://127.0.0.1:3000/api/users
-          
-          # Get user by id (requires token)
-          GET http://127.0.0.1:3000/api/users/:id
-          
-          # Delete user (requires token)
-          DELETE http://127.0.0.1:3000/api/users/:id
-          </code></pre> -->
-
-    <!-- <div class="forms">
-      <div style="flex: 1">
-        <h3>GET and DELETE</h3>
-
-        
-
-        <table class="styled-table">
-          <thead>
-            <tr>
-              <th>User Name</th>
-              <th>User Level</th>
-              <th>Info</th>
-              <th>Delete</th>
-              <th>ID</th>
-            </tr>
-          </thead>
-          <tbody class="tbody"> -->
-            <!-- tänne haetaan kaikki käyttäjät -->
-            <!-- # Get all users -->
-            <!-- GET http://127.0.0.1:3000/api/users -->
-            
-          <!-- </tbody>
-        </table>
-
-        <button class="get_users">Hae users tiedot</button>
-      </div>
-      
-    </div>
-
-    <dialog class="info_dialog">
-      <p> -->
-        <!-- tänne haetaan yksittäinen valittu käyttäjät -->      
-        <!-- <div>UserID: <span>Id</span></div>
-        <div>UserName: <span>Username</span></div>
-        <div>Email: <span>Email</span></div>
-        <div>Role: <span>Role</span></div> 
-      </p>
-      <button autofocus>Close</button>
-    </dialog> -->
-
-    <!-- <h3>Kotitehtävä, tee ja testaa kaikki: /api/entries</h3>
-
-    <p>Hae käyttäjän (user: 1) entires tiedot ja console.log</p>
-    <pre>
-      # Get entries by id
-      GET http://localhost:3000/api/entries/:id
-    </pre> -->
-    <!-- <button class="get_entry">Hae (user:1) entries</button> -->
-
-    
  
