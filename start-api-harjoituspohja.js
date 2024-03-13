@@ -177,6 +177,7 @@ function createTable(data) {
         tbody.appendChild(tr);
     });
 
+    
     document
         .querySelectorAll(".del")
         .forEach((button) => button.addEventListener("click", deleteEntry));
