@@ -44,7 +44,7 @@ form.addEventListener('submit', submitDiary);
 const entriesButton = document.querySelector("#fetchEntries");
 entriesButton.addEventListener("click", getDiaryEntries);
 
-const editDiary = document.getElementById("edit-diary");
+const editDiary = document.getElementById("editDiaryModal");
 const closeButton = document.querySelector(".close-button");
 const editForm = document.getElementById("edit-diary-form");
 
@@ -66,7 +66,7 @@ async function submitDiary(event) {
         console.log(diaryData);
     });
 
-    diaryData.user_id = userId;
+    // diaryData.user_id = userId;
 
     try {
         const url = `http://localhost:3000/api/entries/diary/${userId}`;
@@ -122,6 +122,7 @@ function createTable(data) {
     data.forEach((element) => {
         console.log(
             element.entry_date,
+            element.user_id,
             element.mood,
             element.training_time,
             element.notes,
@@ -163,7 +164,7 @@ function createTable(data) {
         editButton.setAttribute("diary-id", element.diary_id);
         editButton.setAttribute("data-entry-id", element.diary_id);
         editButton.innerText = "Muokkaa";
-        editButton.addEventListener("click", (evt) => openEditDiary(evt, data));
+        editButton.addEventListener("click", () => ShowModal(element);
         td7.appendChild(editButton);
 
         tr.appendChild(td1);
@@ -183,63 +184,124 @@ function createTable(data) {
         .forEach((button) => button.addEventListener("click", deleteEntry));
     document
         .querySelectorAll(".edit")
-        .forEach((button) => button.addEventListener("click", (evt) => openEditDiary(evt, data))
+        .forEach((button) => button.addEventListener("click", () => ShowModal(element))
     );   
 }
 
 
-function openEditDiary(evt, data) {
-    console.log(evt.target.dataset.entryId);
-    const entryId = parseInt(evt.target.dataset.entryId, 10);
-    console.log("Entry ID:", entryId);
-    const entryData = data.find((entry) => entry.diary_id === entryId);
+function ShowModal(element) {
+    document.getElementById('edit-entry-date').value = new Date(element.entry_date).toISOString().split('T')[0]; 
+    document.getElementById('edit-mood').value = element.mood;
+    document.getElementById('edit-training-time').value = element.training_time;
+    document.getElementById('edit-notes').value = element.notes;
+    document.getElementById('edit-goals').value = element.goals;
+    document.getElementById('entry-diary-id').value = element.diary_id; 
+    const form = document.getElementById('edit-diary-form');
+    form.addEventListener('submit', updateDiary)
+    const modal = document.getElementById("editDiaryModal");
+    modal.style.display = "block";
+    // console.log(evt.target.dataset.entryId);
+    // const entryId = parseInt(evt.target.dataset.entryId, 10);
+    // console.log("Entry ID:", entryId);
+    // const entryData = data.find((entry) => entry.diary_id === entryId);
 
-    document.getElementById("edit-diary-id").value = entryId;
-    document.getElementById("edit-entry-date").value = entryData.entry_date;
-    document.getElementById("edit-mood").value = entryData.mood;
-    document.getElementById("edit-training-time").value = entryData.training_time;
-    document.getElementById("edit-notes").value = entryData.notes;
-    document.getElementById("edit-goals").value = entryData.goals;
+    // document.getElementById("edit-diary-id").value = entryId;
+    // document.getElementById("edit-entry-date").value = entryData.entry_date;
+    // document.getElementById("edit-mood").value = entryData.mood;
+    // document.getElementById("edit-training-time").value = entryData.training_time;
+    // document.getElementById("edit-notes").value = entryData.notes;
+    // document.getElementById("edit-goals").value = entryData.goals;
 
-    editDiary.style.display = "block";
+    // editDiary.style.display = "block";
+}
+// kun klikataan x ikkuna sulkeutuu
+closeButton.onclick = function() {
+    editDiary.style.display = "none";
+}
+// kun klikataan mihin vaan ikkunan ulkopuolelle, ikkuna sulkeutuu
+window.onclick = function(event) {
+    if (event.target == editDiary) {
+        editDiary.style.display = "none";
+    }
+}
+
+function updateDiary(evt) {
+    evt.preventDefault();
+    console.log('Päivitetään merkintä');
+    console.log(evt);
+
+    const diary_id = document.getElementById('edit-diary-id').value;
+    const url = `http://127.0.0.1:3000/api/entries/diary/${diary_id}`;
+    let token = localStorage.getItem('token');
+
+    const newEntryDate = document.getElementById('edit-entry-date').value;
+    const newMood = document.getElementById('edit-mood').value;
+    const newTraining_time = document.getElementById('edit-training-time').value;
+    const newNotes = document.getElementById('edit-notes').value;
+    const newGoals = document.getElementById('edit-goals').value;
+
+    const options = {
+        method: 'PUT',
+        headers: {
+            Authorization: 'Bearer: ' + token,
+            'Content-type': 'application/json',
+        },
+        body: JSON.stringify({
+            diary_id: diary_id,
+            entry_date: newEntryDate, 
+            mood: newMood, 
+            training_time: newTraining_time,
+            notes: newNotes, 
+            goals: newGoals}),
+    };
+
+    fetchData(url, options).then((data) => {
+        console.log(data);
+        alert('Merkinnän päivitys onnistunut!')
+        const editDiary = document.getElementById('editDiaryModal');
+        editDiary.style.display ="none";
+        getDiaryEntries();
+    });
 }
 
 
-editForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
 
-    const formData = new FormData(e.target);
-    const entryId = formData.get("edit-diary-id");
 
-    console.log('FormData', formData);
+// editForm.addEventListener("submit", async (e) => {
+//     e.preventDefault();
+
+//     const formData = new FormData(e.target);
+//     const entryId = formData.get("edit-diary-id");
+
+//     console.log('FormData', formData);
 
         
-    const url = `http://localhost:3000/api/entries/diary/${entryId}`;
-    const token = localStorage.getItem("token");
+//     const url = `http://localhost:3000/api/entries/diary/${entryId}`;
+//     const token = localStorage.getItem("token");
 
-    const options = {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          entry_date: formData.get("edit-entry-date"),
-          mood: formData.get("edit-mood"),
-          training_time: formData.get("edit-training-time"),
-          notes: formData.get("edit-notes"),
-          goals: formData.get("edit-goals"),
-        }),
-      };
+//     const options = {
+//         method: "PUT",
+//         headers: {
+//           "Content-Type": "application/json",
+//           Authorization: `Bearer ${token}`,
+//         },
+//         body: JSON.stringify({
+//           entry_date: formData.get("edit-entry-date"),
+//           mood: formData.get("edit-mood"),
+//           training_time: formData.get("edit-training-time"),
+//           notes: formData.get("edit-notes"),
+//           goals: formData.get("edit-goals"),
+//         }),
+//       };
 
-      console.log('options', options);
-      fetchData(url, options).then(() => {
-        editDiary.style.display = "none";
-        getDiaryEntries(); 
-      });
+//       console.log('options', options);
+//       fetchData(url, options).then(() => {
+//         editDiary.style.display = "none";
+//         getDiaryEntries(); 
+//       });
     
     
-});
+// });
 
 async function deleteEntry(evt) {
     console.log(evt);
@@ -267,6 +329,3 @@ async function deleteEntry(evt) {
 }
 
 document.getElementById("fetchEntries").addEventListener("click", getDiaryEntries);
-
-
-
