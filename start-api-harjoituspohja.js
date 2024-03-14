@@ -44,14 +44,14 @@ form.addEventListener('submit', submitDiary);
 const entriesButton = document.querySelector("#fetchEntries");
 entriesButton.addEventListener("click", getDiaryEntries);
 
-const editDiary = document.getElementById("edit-diary");
-const closeButton = document.querySelector(".close-button");
+const editModal = document.getElementById("editdiaryModal");
+const closeButton = document.querySelector(".close");
 const editForm = document.getElementById("edit-diary-form");
 
-closeButton.onclick = () => (editDiary.style.display = "none");
+closeButton.onclick = () => (editModal.style.display = "none");
 window.onclick = (event) => {
-  if (event.target === editDiary) {
-    editDiary.style.display = "none";
+  if (event.target === editModal) {
+    editModal.style.display = "none";
   }
 };
 
@@ -201,7 +201,7 @@ function openEditDiary(evt, data) {
     document.getElementById("edit-notes").value = entryData.notes;
     document.getElementById("edit-goals").value = entryData.goals;
 
-    editDiary.style.display = "block";
+    editModal.style.display = "block";
 }
 
 
@@ -213,30 +213,63 @@ editForm.addEventListener("submit", async (e) => {
 
     console.log('FormData', formData);
 
-        
+    const updatedData = {
+        entry_date: formData.get("edit-entry-date"),
+        mood: formData.get("edit-mood"),
+        training_time: formData.get("edit-training-time"),
+        notes: formData.get("edit-notes"),
+        goals: formData.get("edit-goals"),
+    };
+
     const url = `http://localhost:3000/api/entries/diary/${entryId}`;
     const token = localStorage.getItem("token");
 
     const options = {
         method: "PUT",
         headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          entry_date: formData.get("edit-entry-date"),
-          mood: formData.get("edit-mood"),
-          training_time: formData.get("edit-training-time"),
-          notes: formData.get("edit-notes"),
-          goals: formData.get("edit-goals"),
-        }),
-      };
+        body: JSON.stringify(updatedData),
+    };
 
-      console.log('options', options);
-      fetchData(url, options).then(() => {
-        editDiary.style.display = "none";
-        getDiaryEntries(); 
-      });
+    try {
+        const response = await fetch(url, options);
+        if (!response.ok) {
+            throw new Error('Failed to update entry');
+        }
+        alert('Päiväkirjamerkintä päivitetty onnistuneesti!');
+        editModal.style.display = "none";
+        getDiaryEntries(); // Päivitä lista päiväkirjamerkinnöistä
+    } catch (error) {
+        console.error('Error updating diary entry:', error);
+        alert('Päiväkirjamerkinnän päivittäminen epäonnistui, yritä uudelleen.');
+    }
+
+ // Vanha koodi       
+    // const url = `http://localhost:3000/api/entries/diary/${entryId}`;
+    // const token = localStorage.getItem("token");
+
+    // const options = {
+    //     method: "PUT",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //       Authorization: `Bearer ${token}`,
+    //     },
+    //     body: JSON.stringify({
+    //       entry_date: formData.get("edit-entry-date"),
+    //       mood: formData.get("edit-mood"),
+    //       training_time: formData.get("edit-training-time"),
+    //       notes: formData.get("edit-notes"),
+    //       goals: formData.get("edit-goals"),
+    //     }),
+    //   };
+
+    //   console.log('options', options);
+    //   fetchData(url, options).then(() => {
+    //     editDiary.style.display = "none";
+    //     getDiaryEntries(); 
+    //   });
     
     
 });
@@ -267,6 +300,3 @@ async function deleteEntry(evt) {
 }
 
 document.getElementById("fetchEntries").addEventListener("click", getDiaryEntries);
-
-
-
