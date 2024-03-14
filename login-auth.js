@@ -96,7 +96,7 @@ loginUser.addEventListener('click', async (evt) => {
       localStorage.setItem('name', data.user.username);
       localStorage.setItem('user_id', data.user.user_id);
       // siirrytään oikealle sivulle kun kirjautuminen on onnistunut
-      window.location.href = 'start-api-harjoituspohja.html';
+      window.location.href = 'diary.html';
     };
     
     logResponse('loginResponse', `localStorage set with token value: ${data.token}`);

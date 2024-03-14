@@ -7,7 +7,9 @@ export default defineConfig({
       input: {
         // List your html files here, e.g:
         main: resolve(__dirname, 'etusivu.html'),
-        home: resolve(__dirname, 'home.html'),
+        login: resolve(__dirname, 'login.html'),
+        diary: resolve(__dirname, 'diary.html'),
+
       },
     },
   },
