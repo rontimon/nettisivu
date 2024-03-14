@@ -60,11 +60,12 @@
     <!-- Muokkaa päiväkirjamerkintöjä -->
     <div id="editdiaryModal" class="modal">
       <div class="modal-content">
-        <span class="close">×</span>
-        <form id="edit-diary-form"></form>
+
+        <form id="edit-diary-form">
+          <span class="close">×</span>
           <h3>Muokkaa merkintöjäsi</h3>
         
-          <input type="hidden" id="edit-diary-id" name="edit-diary-id" required>
+          
 
           <label for="edit-entry-date">Päivämäärä:</label>
           <input type="date" id="edit-entry-date" name="edit-entry_date"><br>
@@ -81,7 +82,8 @@
           <label for="edit-goals">Tavoitteet:</label>
           <textarea id="edit-goals" name="edit-goals"></textarea><br>
           
-          <button type="submit" id="editbutton">Päivitä Merkinnät</button>
+          <input type="hidden" id="edit-diary-id" name="edit-diary-id" required>
+          <button type="submit" id="updateEntry">Päivitä Merkinnät</button>
         </form>
       </div>
     </div>

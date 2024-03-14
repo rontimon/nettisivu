@@ -121,11 +121,10 @@ function createTable(data) {
 
     data.forEach((element) => {
         console.log(
+            element.diary_id,
+            element.user_id,
             element.entry_date,
-            element.mood,
-            element.training_time,
-            element.notes,
-            element.goals,
+            
         );
 
         const tr = document.createElement("tr");
@@ -163,7 +162,7 @@ function createTable(data) {
         editButton.setAttribute("diary-id", element.diary_id);
         editButton.setAttribute("data-entry-id", element.diary_id);
         editButton.innerText = "Muokkaa";
-        editButton.addEventListener("click", (evt) => openEditDiary(evt, data));
+        editButton.addEventListener("click", () => openEditDiary(element));
         td7.appendChild(editButton);
 
         tr.appendChild(td1);
@@ -181,48 +180,47 @@ function createTable(data) {
     document
         .querySelectorAll(".del")
         .forEach((button) => button.addEventListener("click", deleteEntry));
-    document
-        .querySelectorAll(".edit")
-        .forEach((button) => button.addEventListener("click", (evt) => openEditDiary(evt, data))
-    );   
+    // document
+    //     .querySelectorAll(".edit")
+    //     .forEach((button) => button.addEventListener("click", () => openEditDiary(element))
+    // );   
 }
 
 
-function openEditDiary(evt, data) {
-    console.log(evt.target.dataset.entryId);
-    const entryId = parseInt(evt.target.dataset.entryId, 10);
-    console.log("Entry ID:", entryId);
-    const entryData = data.find((entry) => entry.diary_id === entryId);
+function openEditDiary(element) {
+    // console.log(element.target.dataset.entryId);
+    // const entryId = parseInt(evt.target.dataset.entryId, 10);
+    // console.log("Entry ID:", entryId);
+    // const entryData = data.find((entry) => entry.diary_id === entryId);
 
-    document.getElementById("edit-diary-id").value = entryId;
-    document.getElementById("edit-entry-date").value = entryData.entry_date;
-    document.getElementById("edit-mood").value = entryData.mood;
-    document.getElementById("edit-training-time").value = entryData.training_time;
-    document.getElementById("edit-notes").value = entryData.notes;
-    document.getElementById("edit-goals").value = entryData.goals;
+    document.getElementById("edit-entry-date").value = new Date(element.entry_date).toISOString().split('T')[0];
+    document.getElementById("edit-mood").value = element.mood;
+    document.getElementById("edit-training-time").value = element.training_time;
+    document.getElementById("edit-notes").value = element.notes;
+    document.getElementById("edit-goals").value = element.goals;
+    document.getElementById("edit-diary-id").value = element.diary_id;
+    const editForm = document.getElementById('edit-diary-form');
+    editForm.addEventListener('submit', updateEntry);
 
     editModal.style.display = "block";
 }
 
+async function updateEntry(evt) {
+    evt.preventDefault();
+    console.log('Päivitetään merkintä')
+    console.log(evt)
+    
+    // const userId = localStorage.getItem('user_id')
 
-editForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-
-    const formData = new FormData(e.target);
-    const entryId = formData.get("edit-diary-id");
-
-    console.log('FormData', formData);
-
-    const updatedData = {
-        entry_date: formData.get("edit-entry-date"),
-        mood: formData.get("edit-mood"),
-        training_time: formData.get("edit-training-time"),
-        notes: formData.get("edit-notes"),
-        goals: formData.get("edit-goals"),
-    };
-
+    const entryId = document.getElementById('edit-diary-id').value;
     const url = `http://localhost:3000/api/entries/diary/${entryId}`;
     const token = localStorage.getItem("token");
+
+    const newEntryDate = document.getElementById('edit-entry-date').value;
+    const newMood = document.getElementById('edit-mood').value;
+    const newTrainingtime = document.getElementById('edit-training-time').value;
+    const newNotes = document.getElementById('edit-notes').value;
+    const newGoals = document.getElementById('edit-goals').value;
 
     const options = {
         method: "PUT",
@@ -230,49 +228,64 @@ editForm.addEventListener("submit", async (e) => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(updatedData),
+        body: JSON.stringify({
+            entry_date: newEntryDate,
+            mood: newMood,
+            training_time: newTrainingtime,
+            notes: newNotes,
+            goals: newGoals}),
     };
 
-    try {
-        const response = await fetch(url, options);
-        if (!response.ok) {
-            throw new Error('Failed to update entry');
-        }
-        alert('Päiväkirjamerkintä päivitetty onnistuneesti!');
-        editModal.style.display = "none";
-        getDiaryEntries(); // Päivitä lista päiväkirjamerkinnöistä
-    } catch (error) {
-        console.error('Error updating diary entry:', error);
-        alert('Päiväkirjamerkinnän päivittäminen epäonnistui, yritä uudelleen.');
-    }
+    fetchData(url, options).then((data) => {
+        console.log(data);
+        alert('Merkinnän päivitys onnistunut!')
+        const modal = document.getDiaryEntries('editdiaryModal');
+        modal.style.display ="none";
+        getDiaryEntries();
+    });  
+};
 
- // Vanha koodi       
-    // const url = `http://localhost:3000/api/entries/diary/${entryId}`;
-    // const token = localStorage.getItem("token");
 
-    // const options = {
-    //     method: "PUT",
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //       Authorization: `Bearer ${token}`,
-    //     },
-    //     body: JSON.stringify({
-    //       entry_date: formData.get("edit-entry-date"),
-    //       mood: formData.get("edit-mood"),
-    //       training_time: formData.get("edit-training-time"),
-    //       notes: formData.get("edit-notes"),
-    //       goals: formData.get("edit-goals"),
-    //     }),
-    //   };
 
-    //   console.log('options', options);
-    //   fetchData(url, options).then(() => {
-    //     editDiary.style.display = "none";
-    //     getDiaryEntries(); 
-    //   });
+
+// async function updateEntry(evt) {
+//     evt.preventDefault();
+//     console.log('Päivitetään merkintä')
+//     console.log(evt)
     
-    
-});
+
+//     const entryId = document.getElementById('edit-diary-id').value;
+//     const url = `http://localhost:3000/api/entries/diary/${entryId}`;
+//     const token = localStorage.getItem("token");
+
+//     const newEntryDate = document.getElementById('edit-entry-date').value;
+//     const newMood = document.getElementById('edit-mood').value;
+//     const newTrainingtime = document.getElementById('edit-training-time').value;
+//     const newNotes = document.getElementById('edit-notes').value;
+//     const newGoals = document.getElementById('edit-goals').value;
+
+//     const options = {
+//         method: "PUT",
+//         headers: {
+//             "Content-Type": "application/json",
+//             Authorization: `Bearer ${token}`,
+//         },
+//         body: JSON.stringify({
+//             entry_date: newEntryDate,
+//             mood: newMood,
+//             training_time: newTrainingtime,
+//             notes: newNotes,
+//             goals: newGoals}),
+//     };
+
+//     fetchData(url, options).then((data) => {
+//         console.log(data);
+//         alert('Merkinnän päivitys onnistunut!')
+//         const modal = document.getDiaryEntries('editdiaryModal');
+//         modal.style.display ="none";
+//         getDiaryEntries();
+//     });  
+// };
 
 async function deleteEntry(evt) {
     console.log(evt);
@@ -300,3 +313,53 @@ async function deleteEntry(evt) {
 }
 
 document.getElementById("fetchEntries").addEventListener("click", getDiaryEntries);
+
+
+
+// async function updateDiaryEntry(event) {
+//     event.preventDefault();
+    
+//     const entryId = document.getElementById('edit-diary-id').value;
+//     const url = `http://localhost:3000/api/entries/diary/${entryId}`;
+//     const token = localStorage.getItem("token");
+    
+//     const updateData = {
+//         entry_date: document.getElementById('edit-entry-date').value,
+//         mood: document.getElementById('edit-mood').value,
+//         training_time: document.getElementById('edit-training-time').value,
+//         notes: document.getElementById('edit-notes').value,
+//         goals: document.getElementById('edit-goals').value,
+//         diary_id: document.getElementById('edit-diary-id').value,
+//     };
+    
+//     const options = {
+//         method: "PUT",
+//         headers: {
+//             "Content-Type": "application/json",
+//             Authorization: `Bearer ${token}`,
+//         },
+//         body: JSON.stringify(updateData),
+//     };
+    
+//     try {
+//         const response = await fetch(url, options);
+        
+//         if (!response.ok) {
+//             throw new Error('Failed to update diary entry');
+//         }
+
+//         // Jos haluat käsitellä palvelimen vastauksen:
+//         // const responseData = await response.json();
+//         // console.log(responseData); // Käytä tätä tietoa tarpeen mukaan
+        
+//         alert('Merkinnän päivitys onnistui!');
+//         document.getElementById('editdiaryModal').style.display = "none";
+//         getDiaryEntries();
+//     } catch (error) {
+//         console.error('Error updating diary entry:', error);
+//         alert('Merkinnän päivitys epäonnistui. Yritä uudelleen.');
+//     }
+// }
+
+// // Muista lisätä kuuntelija päivitä-nappulalle
+// document.getElementById('updateEntry').addEventListener('click', updateDiaryEntry);

@@ -450,7 +450,7 @@ margin: 0; /* Poistetaan oletusmarginaalit */
 }
 
 /* Ikkunan sisältö */
-.modal-content {
+#edit-diary-form {
   color: white;
   background-color: #271908;
   border-radius: 30px;
@@ -490,8 +490,9 @@ textarea {
   box-sizing: border-box; /* Border ja padding sisältyvät leveyteen */
 }
 
+
 /* Päivitä-painikkeen tyylittely */
-#editbutton[type="submit"] {
+#updateEntry[type="submit"] {
   width: 100%;
   background-color: #986627;
   color: white;
@@ -502,7 +503,7 @@ textarea {
   cursor: pointer;
 }
 
-#editbutton[type="submit"]:hover {
+#updateEntry[type="submit"]:hover {
   background-color: #986527;
 }
 
