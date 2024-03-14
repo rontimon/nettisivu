@@ -239,53 +239,11 @@ async function updateEntry(evt) {
     fetchData(url, options).then((data) => {
         console.log(data);
         alert('Merkinnän päivitys onnistunut!')
-        const modal = document.getDiaryEntries('editdiaryModal');
-        modal.style.display ="none";
+        editModal.style.display = "none";
         getDiaryEntries();
     });  
 };
 
-
-
-
-// async function updateEntry(evt) {
-//     evt.preventDefault();
-//     console.log('Päivitetään merkintä')
-//     console.log(evt)
-    
-
-//     const entryId = document.getElementById('edit-diary-id').value;
-//     const url = `http://localhost:3000/api/entries/diary/${entryId}`;
-//     const token = localStorage.getItem("token");
-
-//     const newEntryDate = document.getElementById('edit-entry-date').value;
-//     const newMood = document.getElementById('edit-mood').value;
-//     const newTrainingtime = document.getElementById('edit-training-time').value;
-//     const newNotes = document.getElementById('edit-notes').value;
-//     const newGoals = document.getElementById('edit-goals').value;
-
-//     const options = {
-//         method: "PUT",
-//         headers: {
-//             "Content-Type": "application/json",
-//             Authorization: `Bearer ${token}`,
-//         },
-//         body: JSON.stringify({
-//             entry_date: newEntryDate,
-//             mood: newMood,
-//             training_time: newTrainingtime,
-//             notes: newNotes,
-//             goals: newGoals}),
-//     };
-
-//     fetchData(url, options).then((data) => {
-//         console.log(data);
-//         alert('Merkinnän päivitys onnistunut!')
-//         const modal = document.getDiaryEntries('editdiaryModal');
-//         modal.style.display ="none";
-//         getDiaryEntries();
-//     });  
-// };
 
 async function deleteEntry(evt) {
     console.log(evt);

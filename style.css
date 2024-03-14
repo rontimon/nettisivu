@@ -449,6 +449,7 @@ margin: 0; /* Poistetaan oletusmarginaalit */
   background-color: rgba(0,0,0,0.4); /* Musta, läpinäkyvyys */
 }
 
+
 /* Ikkunan sisältö */
 #edit-diary-form {
   color: white;
