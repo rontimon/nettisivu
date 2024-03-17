@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Vite App</title>
+    <script type="module" crossorigin src="/assets/diary-V9KY1cSg.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/fetch-CIEPykbw.js">
+    <link rel="stylesheet" crossorigin href="/assets/fetch-Cu7UcxXV.css">
+  </head>
+  <body>
+    <nav>
+      <a href="#createUser">LongWay</a>
+      <!-- <a href="#loginUser">Login User</a> -->
+      <!-- <a href="#userInfo">Info</a> -->
+      
+    </nav>
+    <main>
+
+    <div id="app"></div>
+
+    <div class="user"><h2>Tervetuloa päiväkirjaasi <span id="name">NIMI TÄHÄN</span>!</h2></div>
+
+
+
+    <!-- <h3>Päiväkirjasi</h3> -->
+  <div class="training-diary-form">
+    <form id="diary-form">
+      <input type="date" name="entry_date" required>
+      <label for="mood">Päivän mood? (1-10):</label><br>
+      <input type="range" id="mood" name="mood" min="1" max="10" value="5" oninput="moodValue.value = this.value" style="width: 100%;">
+      <output id="moodValue">5</output><br>
+      <input type="text" name="training_time" placeholder="Treenin kesto minuutteina" required>
+      <textarea name="notes" placeholder="Merkinnät"></textarea>
+      <textarea name="goals" placeholder="Tavoitteet"></textarea>
+      <button type="submit">Lisää merkintä</button>
+    </form>
+  </div>  
+
+    <button id="fetchEntries">Hae aikaisemmat päiväkirjamerkintäsi</button>
+    <table class="diaryEntriesContainer">
+      <thead>
+        <tr>
+          <th>Päivämäärä</th>
+          <th>Mieliala</th>
+          <th>Treenin kesto (min)</th>
+          <th>Merkinnät</th>
+          <th>Tavoitteet</th>
+          <th>Poista</th>
+          <th>Muokkaa</th>
+        </tr>
+      </thead>
+      <tbody class="tbody">
+        <!-- Tänne haetaan päiväkirjamerkinnät -->
+      </tbody>
+    </table>
+
+
+    <!-- Muokkaa päiväkirjamerkintöjä -->
+    <div id="editdiaryModal" class="modal">
+      <div class="modal-content">
+
+        <form id="edit-diary-form">
+          <span class="close">×</span>
+          <h3>Muokkaa merkintöjäsi</h3>
+        
+          
+
+          <label for="edit-entry-date">Päivämäärä:</label>
+          <input type="date" id="edit-entry-date" name="edit-entry_date"><br>
+
+          <label for="edit-mood">Mieliala:</label>
+          <input type="number" id="edit-mood" name="edit-mood" min="1" max="10"><br>
+
+          <label for="edit-training-time">Treenin kesto:</label>
+          <input type="text" id="edit-training-time" name="edit-training_time"><br>
+
+          <label for="edit-notes">Merkinnät:</label>
+          <textarea id="edit-notes" name="edit-notes"></textarea><br>
+
+          <label for="edit-goals">Tavoitteet:</label>
+          <textarea id="edit-goals" name="edit-goals"></textarea><br>
+          
+          <input type="hidden" id="edit-diary-id" name="edit-diary-id" required>
+          <button type="submit" id="updateEntry">Päivitä Merkinnät</button>
+        </form>
+      </div>
+    </div>
+    
+    
+    
+
+    
+ </main>
+
+  <footer>Copyright, LongWay</footer>
+  
+  </body>
+  
+  
+  <!-- <script type="module" src="/start-auth.js"></script> -->
+</html>

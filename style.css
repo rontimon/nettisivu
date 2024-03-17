@@ -223,6 +223,19 @@ margin: 0; /* Poistetaan oletusmarginaalit */
 
   
 /* Toisen sivun sääntöjä */
+
+
+
+#kuva {
+  width: 100px;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 1;
+  border-radius: 30px;
+}
+
+
   button {
     border-radius: 8px;
     border: 1px solid transparent;
