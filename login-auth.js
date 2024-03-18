@@ -8,7 +8,8 @@ createUser.addEventListener('click', async (evt) => {
   evt.preventDefault();
   console.log('Nyt luodaan käyttäjä');
 
-  const url = 'http://127.0.0.1:3000/api/users';
+  // const url = 'http://127.0.0.1:3000/api/users';
+  const url = '/api/users';
 
   // # Create user
   // POST http://127.0.0.1:3000/api/users
@@ -62,7 +63,8 @@ loginUser.addEventListener('click', async (evt) => {
   //   "password": "secret"
   // }
 
-  const url = 'http://localhost:3000/api/auth/login';
+  // const url = 'http://localhost:3000/api/auth/login';
+  const url = '/api/auth/login';
 
   const form = document.querySelector('.login_form');
 
@@ -112,7 +114,8 @@ meRequest.addEventListener('click', async () => {
   // GET http://localhost:3000/api/auth/me
   // Authorization: Bearer (put-user-token-here)
 
-  const url = 'http://localhost:3000/api/auth/me';
+  // const url = 'http://localhost:3000/api/auth/me';
+  const url = '/api/auth/me';
   const muntokeni = localStorage.getItem('token');
   console.log('Tämä on haettu LocalStoragesta', muntokeni);
 

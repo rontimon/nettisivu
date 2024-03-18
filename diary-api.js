@@ -21,7 +21,8 @@ document.addEventListener('DOMContentLoaded', async function () {
 });
 
 async function showUserName(token) {
-    const url = 'http://localhost:3000/api/auth/me';
+    // const url = 'http://localhost:3000/api/auth/me';
+    const url = '/api/auth/me';
     const options = {
         method: 'GET',
         headers: {
@@ -69,7 +70,8 @@ async function submitDiary(event) {
     diaryData.user_id = userId;
 
     try {
-        const url = `http://localhost:3000/api/entries/diary/${userId}`;
+        // const url = `http://localhost:3000/api/entries/diary/${userId}`;
+        const url = `/api/entries/diary/${userId}`;
         const token = localStorage.getItem('token');
         const options = {
             method: 'POST',
@@ -98,7 +100,8 @@ async function submitDiary(event) {
 
 async function getDiaryEntries() {
     const userId = localStorage.getItem("user_id");
-    const url = `http://localhost:3000/api/entries/diary/${userId}`;
+    // const url = `http://localhost:3000/api/entries/diary/${userId}`;
+    const url = `/api/entries/diary/${userId}`;
     const token = localStorage.getItem("token");
 
     const options = {
@@ -213,7 +216,8 @@ async function updateEntry(evt) {
     // const userId = localStorage.getItem('user_id')
 
     const entryId = document.getElementById('edit-diary-id').value;
-    const url = `http://localhost:3000/api/entries/diary/${entryId}`;
+    // const url = `http://localhost:3000/api/entries/diary/${entryId}`;
+    const url = `/api/entries/diary/${entryId}`;
     const token = localStorage.getItem("token");
 
     const newEntryDate = document.getElementById('edit-entry-date').value;
@@ -251,7 +255,8 @@ async function deleteEntry(evt) {
     const id = evt.target.attributes["diary-id"].value;
     console.log(id);
 
-    const url = `http://localhost:3000/api/entries/diary/${id}`;
+    // const url = `http://localhost:3000/api/entries/diary/${id}`;
+    const url = `/api/entries/diary/${id}`;
     const token = localStorage.getItem("token");
 
     const options = {
@@ -274,50 +279,3 @@ document.getElementById("fetchEntries").addEventListener("click", getDiaryEntrie
 
 
 
-// async function updateDiaryEntry(event) {
-//     event.preventDefault();
-    
-//     const entryId = document.getElementById('edit-diary-id').value;
-//     const url = `http://localhost:3000/api/entries/diary/${entryId}`;
-//     const token = localStorage.getItem("token");
-    
-//     const updateData = {
-//         entry_date: document.getElementById('edit-entry-date').value,
-//         mood: document.getElementById('edit-mood').value,
-//         training_time: document.getElementById('edit-training-time').value,
-//         notes: document.getElementById('edit-notes').value,
-//         goals: document.getElementById('edit-goals').value,
-//         diary_id: document.getElementById('edit-diary-id').value,
-//     };
-    
-//     const options = {
-//         method: "PUT",
-//         headers: {
-//             "Content-Type": "application/json",
-//             Authorization: `Bearer ${token}`,
-//         },
-//         body: JSON.stringify(updateData),
-//     };
-    
-//     try {
-//         const response = await fetch(url, options);
-        
-//         if (!response.ok) {
-//             throw new Error('Failed to update diary entry');
-//         }
-
-//         // Jos haluat käsitellä palvelimen vastauksen:
-//         // const responseData = await response.json();
-//         // console.log(responseData); // Käytä tätä tietoa tarpeen mukaan
-        
-//         alert('Merkinnän päivitys onnistui!');
-//         document.getElementById('editdiaryModal').style.display = "none";
-//         getDiaryEntries();
-//     } catch (error) {
-//         console.error('Error updating diary entry:', error);
-//         alert('Merkinnän päivitys epäonnistui. Yritä uudelleen.');
-//     }
-// }
-
-// // Muista lisätä kuuntelija päivitä-nappulalle
-// document.getElementById('updateEntry').addEventListener('click', updateDiaryEntry);
